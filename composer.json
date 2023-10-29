@@ -1,0 +1,32 @@
+{
+    "name": "equip/projeto-mvc",
+    "description": "projeto Bimestral PHP",
+    "autoload": {
+        "psr-4": {
+            "App\\": "App"
+        }
+    },
+    "authors": [
+        {
+            "name": "Anderson Marques",
+            "email": "andermarsil@gmail.com"
+          
+
+        },
+        {
+            "name": "Brendon Feitos",
+            "email": "andermarsil@gmail.com"
+          
+
+        },
+        {
+            "name": "Suzana Sousa",
+            "email": "andermarsil@gmail.com"
+          
+
+        }
+    ],
+    "require": {
+       
+    }
+}
