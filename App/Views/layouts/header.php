@@ -10,6 +10,8 @@
     <link href="http://<?php echo APP_HOST; ?>/public/css/bootstrap.min.css" rel="stylesheet">
     <link href="http://<?php echo APP_HOST; ?>/public/css/main.css" rel="stylesheet">
     <link href="http://<?php echo APP_HOST; ?>/public/css/styles.css" rel="stylesheet">
+    <link href="http://<?php echo APP_HOST; ?>/public/css/navbars-offcanvas.css" rel="stylesheet">
 
 </head>
 <body>
+   

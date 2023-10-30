@@ -1,8 +1,9 @@
+</main>
 <p> </p>
-<footer class="footer fixed-bottom">
+<footer class="footer fixed-bottom cor-bg-ft-mn">
     <br>
     <div class="text-center align-text-middle"
-        style="padding: 15px 0; margin-bottom: 0; background-color: #6c0087; color: white">
+        style="padding: 15px 0; margin-bottom: 0;">
         &copy; <em>2023 - Curso de PHP Fatec de Presidente Prudente/SP</em><br />
 
     </div>

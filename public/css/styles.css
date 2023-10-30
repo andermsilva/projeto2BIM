@@ -1,9 +1,22 @@
-.size-menu{
-    margin-left: auto;
-    margin-right: auto;
-    width: 86%;
+main {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
 }
-.logged{
 
-  z-index: 10;
+.espacamento {
+  display: flex;
+  background-color: aqua;
+  height: 80px;
+  justify-content: space-between;
+  
+}
+.margin-tp{
+
+  margin-top: 16px;
+}
+
+.cor-bg-ft-mn{
+  background-color: #f55555; 
+
 }
