@@ -6,9 +6,9 @@ main {
 
 .espacamento {
   display: flex;
-  background-color: aqua;
-  height: 80px;
-  justify-content: space-between;
+  padding-left: 8px;
+  padding-right: 8px;
+  justify-content: space-around;
   
 }
 .margin-tp{
@@ -19,4 +19,7 @@ main {
 .cor-bg-ft-mn{
   background-color: #f55555; 
 
+}
+.qtd-car{
+  font-size: 0.75rem;
 }

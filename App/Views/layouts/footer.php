@@ -2,7 +2,7 @@
 <p> </p>
 <footer class="footer fixed-bottom cor-bg-ft-mn">
     <br>
-    <div class="text-center align-text-middle"
+    <div class="text-center align-text-middle text-light"
         style="padding: 15px 0; margin-bottom: 0;">
         &copy; <em>2023 - Curso de PHP Fatec de Presidente Prudente/SP</em><br />
 
