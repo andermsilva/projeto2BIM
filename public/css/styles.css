@@ -23,3 +23,14 @@ main {
 .qtd-car{
   font-size: 0.75rem;
 }
+
+.img_card {
+
+  max-height: 180px;
+  align-self: center;
+  width: 278px;
+  height: 254px;
+  border-radius: 8px;
+  object-fit: cover;
+
+}
