@@ -40,12 +40,11 @@ abstract class BaseDAO
             $colunas = str_replace(":", "", $cols);
             $stmt = $this->conexao->prepare("insert into $table($colunas) values($parametros)");
 
-            //  echo "aqui dao";
-
-
+            
             $stmt->bindParam($parametros, $colunas);
+            
+         
 
-            //var_dump($values);exit; 
             $stmt->execute($values);
 
 
@@ -65,9 +64,12 @@ abstract class BaseDAO
                 " $where = WHERE $where ";
 
             $stmt = $this->conexao->prepare("update $table set $cols Where $where");
-            //  var_dump($values);exit;
-
-            $stmt->execute($values);
+        /*      var_dump($table);
+             var_dump($cols);
+             var_dump($values);
+             
+             var_dump($stmt);exit; */
+             $stmt->execute($values);
 
             return $stmt->rowCount();
         } else {

@@ -6,9 +6,9 @@
 
     public function index(){
 
-        $produto = new ProdutoDAO();
+        $produtos = new ProdutoDAO();
 
-        self::setViewParam("listaProdutos", $produto->listar());
+        self::setViewParam("listaProdutos", $produtos->listar());
 
 
 

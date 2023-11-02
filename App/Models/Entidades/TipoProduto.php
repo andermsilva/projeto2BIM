@@ -3,12 +3,9 @@
  
  class TipoProduto{
 
-    private int $tipo_cod;
+    private int $tipocod;
     private string $tipo_nome;
 
-    /**
-     * Get the value of tipo_nome
-     */ 
     public function getTipo_nome():string
     {
         return $this->tipo_nome;
@@ -18,20 +15,17 @@
     public function setTipo_nome($tipo_nome)
     {
         $this->tipo_nome = $tipo_nome;
-
-        
+  
     }
 
- 
-    public function getTipo_cod():int
+     public function getTipocod():int
     {
-        return $this->tipo_cod;
+        return $this->tipocod;
     }
-
     
-    public function setTipo_cod($tipo_cod)
+    public function setTipocod($tipocod)
     {
-        $this->tipo_cod = $tipo_cod;
+        $this->tipocod = $tipocod;
 
     }
  }

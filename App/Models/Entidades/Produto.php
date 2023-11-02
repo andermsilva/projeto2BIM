@@ -10,10 +10,10 @@ class Produto
   private string $nome;
   private string $descricao;
   private float $preco;
-  private bool $promo;
+  private string $promo;
   private string $imageurl;
   private float $peso;
-  private float $desconto;
+  private float $desconto=0;
 
 
 public function __construct(){

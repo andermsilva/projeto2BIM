@@ -7,7 +7,7 @@
         <div class="card shadow mb-4 ms-4" style="width: 18rem;">
        
       
-      <img src="http://<?php echo APP_HOST; ?>/public/image/<?php echo $produto->getImageUrl();?>" class="img_card" alt="..."> 
+      <img src="http://<?php echo APP_HOST; ?>/public/image/produtos/<?php echo $produto->getImageUrl();?>" class="img_card" alt="..."> 
         <div class="card-body">
             <p class="card-text"><?= $produto->getNome()?>.... R$ <?=number_format($produto->getPreco(),2,',',".") ?></p>
             <p class="card-text"><?= number_format($produto->getPeso(), 2, ',', '.')?> Kg</p>
