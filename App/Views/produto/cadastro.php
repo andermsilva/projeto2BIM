@@ -10,7 +10,9 @@
         <div class="container3">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome do Produto</label>
-                <input type="text" name="nome" class="form-control" id="nome">
+                <input type="text" name="nome" class="form-control"
+             
+                id="nome">
 
             </div>
             <div class="mb-3">
@@ -45,7 +47,7 @@
 
             <div class="mb-3" style="width: 600px;">
                 <label for="descricao" class="form-label">Informções do Produto ou Ingredientes</label>
-                <textarea class="form-control" id="descricao" name="decricao" rows="3"></textarea>
+                <textarea class="form-control" id="descricao" name="descricao" rows="3"></textarea>
                
                 <input class="form-check-input" type="checkbox" id="promo" name="promo">
                 <label class="form-check-label" for="promo">

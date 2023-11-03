@@ -1,9 +1,13 @@
 <h2 class="text-center">
-    <?php echo TITLE; ?>
+    <?php
+
+    use App\Lib\Sessao;
+
+    echo TITLE; ?>
 </h2>
-<h3 class="text-center">Gerenciamento de Produtos</h3>
 
 <div class="container-sm">
+
     <div class="d-flex justify-content-between">
 
         <div>
@@ -13,14 +17,29 @@
             </a>
         </div>
 
-      
-        <div class="input-group mb-3" style="width:300px;">
-            <input class="form-control" type="text" placeholder="Recipient's username"
-                aria-label="Recipient's username">
-            <button class="btn btn-outline-success" type="button" id="button-addon2">Buscar</button>
 
-        </div>
+        <form action="http://<?php echo APP_HOST; ?>/produto/" method="get" class="form-inline">
+            <div class="input-group mb-3" style="width:300px;">
+
+                <input class="form-control" type="text" name="busca" placeholder=""
+                    aria-label="Recipient's username">
+                <button class="btn btn-outline-success" type="subimit" id="button-addon2">Buscar</button>
+
+            </div>
+        </form>
     </div>
+    <?php
+    if (Sessao::retornaErro()) {
+
+        echo "<br> <span class='alert alert-warning'> ".Sessao::retornaErro()." <br> </span>";
+    }
+    if ( Sessao::retornaMensagem()) {
+
+        echo " <br> <span class='alert alert-warning'>". Sessao::retornaMensagem()." <br> </span>";
+    }
+
+    ?>
+
     <hr>
     <table class="table">
         <thead>
@@ -51,7 +70,7 @@
                         <?php echo substr($produto->getDescricao(), 0, 70); ?>
                     </td>
                     <td class="text-center">
-                        <?php echo $produto->getPeso(); ?> 
+                        <?php echo $produto->getPeso(); ?>
                     </td>
                     <td>
                         R$
@@ -59,21 +78,25 @@
                     </td>
                     <td>
                         <img src="http://<?php echo APP_HOST ?>/public/image/produtos/<?php echo $produto->getImageUrl(); ?>"
-                            width="45 alt="">
-                       <!--   -->
+                            height="30" alt="">
+
                     </td>
-                  
+
                     <td>
-                        <?php echo ($produto->getPromo() == 1) ? 'promoção' : ''; ?>
+                        <?php echo ($produto->getPromo() == 1) ? 'promoção' : 'Normal'; ?>
                     </td>
-                    <td class=" d-flex justify-content-center">
+                    <td class="d-flex justify-content-center align-items-center">
 
-                        <a href="http://<?php echo APP_HOST ?>/produto/edicao/<?php echo $produto->getCodigo(); ?><?php echo $viewVar['queryString']; ?>"
-                        style="margin-right: 5px;">
+                        <a href="http://<?php echo APP_HOST; ?>/produto/edicao/<?php echo $produto->getCodigo(); ?>
+                        <?php echo $viewVar['queryString']; ?>" style="margin-right: 5px;">
 
-                            <button type="button" class="btn btn-primary">Editar</button> 
+                            <button type="button" class="btn btn-primary">Editar</button>
                         </a>
-                        <button type="button" class="btn btn-danger">Excluir</button>
+                        <a href="">
+
+
+                            <button type="button" class="btn btn-danger">Excluir</button>
+                        </a>
 
                     </td>
 
@@ -84,8 +107,8 @@
 
         </tbody>
     </table>
-    <div class="teste" >
+    <div class="teste">
         <?php echo $viewVar['paginacao']; ?>
-   </div>
+    </div>
 
 </div>

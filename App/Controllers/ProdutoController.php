@@ -61,7 +61,7 @@ class ProdutoController extends Controller
         $produto = new Produto();
 
         $produto->setNome($_POST["nome"]);
-        $produto->setDescricao($_POST["decricao"]);
+        $produto->setDescricao($_POST["descricao"]);
         $produto->setPreco(str_replace(',', '.', $_POST["preco"]));
         $produto->setPeso(str_replace(',', '.', $_POST["peso"]));
         $produto->setTipoProduto($tipo);
@@ -123,26 +123,102 @@ class ProdutoController extends Controller
 
     public function edicao($params)
     {
+       
         $codigo = $params[0];
 
         $produtoDAO = new ProdutoDAO();
 
         $produto = $produtoDAO->getById($codigo);
-
+        $busca              = isset($_GET['busca']) ? $_GET['busca'] : null;
         if (!$produto) {
             Sessao::gravaMensagem("Produto (codigo:{$codigo}) inexistente.");
             $this->redirect('/produto');
         }
-        $fornecedorDAO = new TipoProdutoDAO();
-
-        self::setViewParam('listaFornecedores', $fornecedorDAO->listar());
+        $tipoProduto = new TipoProdutoDAO();
+        
+        self::setViewParam('listaTipo', $tipoProduto->listar());
         self::setViewParam('produto', $produto);
-        self::setViewParam('queryString', Paginacao::criandoQuerystring($_GET['paginaSelecionada'], $_GET['busca']));
-
+        self::setViewParam('queryString', Paginacao::criandoQuerystring($_GET['paginaSelecionada'],$busca));
+       
         $this->render('/produto/editar');
 
         Sessao::limpaMensagem();
         Sessao::limpaErro();
+    }
+
+    public function atualizar()
+    {
+
+        $promo = null;
+        if (isset($_POST["promo"])) {
+
+            $promo = true;
+        } else {
+
+            $promo = '0';
+
+        }
+        $produto = new Produto();
+
+        $produto->setCodigo($_POST['cod']);
+        $produto->setNome($_POST['nome']);
+        $produto->setPreco($_POST['preco']);
+        $produto->setPeso($_POST['peso']);
+        $produto->setPromo($promo);
+        $produto->setDescricao($_POST['descricao']);
+        $produto->getTipoProduto()->setTipocod($_POST['tipo']);
+        $produto->setImageUrl($_POST['imagem1']);
+
+        Sessao::gravaFormulario($_POST);
+
+        $produtoValidador = new ProdutoValidador();
+        $resultadoValidacao = $produtoValidador->validar($produto);
+
+        if($resultadoValidacao->getErros()){
+            Sessao::gravaErro($resultadoValidacao->getErros());
+            $this->redirect('/produto/edicao/'.$_POST['cod']);
+        }
+
+        try {
+
+            $dir = 'public/image/produtos';
+            $file = $dir .'/'.$_POST['imagem0'];
+
+            if (empty($_POST['imagem1'])) {
+                if (file_exists($file)) unlink($file);
+            }
+
+            if (!empty($_FILES['imagem']['name'])) {      
+                $objUpload = new Upload($_FILES['imagem']);
+                $objUpload->setName('img-id'.$produto->getCodigo());
+                $produto->setImageUrl($objUpload->getBasename());
+
+                if (file_exists($file)) unlink($file);
+                
+                $sucesso = $objUpload->upload($dir); 
+    
+                if (!$sucesso) {
+                    $resultadoValidacao->addErro('imagem',"Imagem: Problemas ao enviar a imagem do produto. Código de erro: ".$objUpload->getError());
+                    Sessao::gravaErro($resultadoValidacao->getErros());
+                    $this->redirect('/produto'.$_POST['cod'].'?busca='.$_GET['busca'].'&paginaSelecionada='.$_GET['paginaSelecionada']);
+                }               
+            }
+
+            $produtoDAO = new ProdutoDAO();
+            $produtoDAO->atualizar($produto);
+
+        } catch (\Exception $e) {
+            Sessao::gravaMensagem($e->getMessage());
+            $this->redirect('/produto');
+        }
+
+        Sessao::limpaFormulario();
+        Sessao::limpaMensagem();
+        Sessao::limpaErro();
+
+        Sessao::gravaMensagem("Produto atualizado com sucesso!");
+
+        $this->redirect('/produto');
     }
 }
 ?>
