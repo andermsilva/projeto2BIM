@@ -21,8 +21,7 @@
         <form action="http://<?php echo APP_HOST; ?>/produto/" method="get" class="form-inline">
             <div class="input-group mb-3" style="width:300px;">
 
-                <input class="form-control" type="text" name="busca" placeholder=""
-                    aria-label="Recipient's username">
+                <input class="form-control" type="text" name="busca" placeholder="" aria-label="Recipient's username">
                 <button class="btn btn-outline-success" type="subimit" id="button-addon2">Buscar</button>
 
             </div>
@@ -31,11 +30,11 @@
     <?php
     if (Sessao::retornaErro()) {
 
-        echo "<br> <span class='alert alert-warning'> ".Sessao::retornaErro()." <br> </span>";
+        echo "<br> <span class='alert alert-warning'> " . Sessao::retornaErro() . " <br> </span>";
     }
-    if ( Sessao::retornaMensagem()) {
+    if (Sessao::retornaMensagem()) {
 
-        echo " <br> <span class='alert alert-warning'>". Sessao::retornaMensagem()." <br> </span>";
+        echo " <br> <span class='alert alert-warning'>" . Sessao::retornaMensagem() . " <br> </span>";
     }
 
     ?>
@@ -47,7 +46,7 @@
                 <th scope="col">#</th>
                 <th scope="col-2">Nome</th>
                 <th scope="col-2">Descrição</th>
-                <th scope="col-2">Peso/ml</th>
+                <th scope="col-2">Kg/ml</th>
                 <th scope="col-2">Preço </th>
                 <th scope="col-2">Imagem</th>
 
@@ -92,12 +91,15 @@
 
                             <button type="button" class="btn btn-primary">Editar</button>
                         </a>
-                        <a href="">
 
+                        <a href="http://<?php echo APP_HOST; ?>/produto/exclusao/<?php echo $produto->getCodigo(); ?>
+                        <?php echo $viewVar['queryString']; ?>" style="margin-right: 5px;">
 
                             <button type="button" class="btn btn-danger">Excluir</button>
                         </a>
+                     
 
+                    
                     </td>
 
                 </tr>

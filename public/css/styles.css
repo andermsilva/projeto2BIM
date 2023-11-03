@@ -37,15 +37,18 @@ main {
 
 .container2{
   width: 80%;
-  background-color: #c9fef5;
+  padding-top: 8px;
+  background-color: #ebbcbc;
+  border-radius: 10px;
 }
 .container3{
  
   display: flex;
   flex-wrap: wrap;
-  background-color: #f55555;
+  
+  background-color: #be9d9d;
   justify-content: space-around;
-
+  border-radius: 10px;
 }
 .up{
 
@@ -57,4 +60,13 @@ main {
   width: 220px;
   text-align: center;
  
+}
+.card-excluir{
+
+  width: 30%;
+  margin-left:35%;
+  padding: 20px;
+  border-radius: 8px;
+ 
+  background-color: #cfcfcf;
 }

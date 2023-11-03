@@ -1,4 +1,4 @@
-<h2 class="text-center">Cadastro de Produto</h2>
+<h2 class="text-center">Atualização de Produto</h2>
 <div class="container2 container">
     <?php if ($Sessao::retornaErro()) { ?>
         <div class="alert alert-warning" role="alert">
@@ -65,7 +65,7 @@
                 <label for="descricao" class="form-label">Informções do Produto ou Ingredientes</label>
                 <textarea class="form-control" id="descricao" name="descricao" rows="3">
 
-                <?php echo $viewVar['produto']->getDescricao() ?>
+                <?php echo trim($viewVar['produto']->getDescricao()) ?>
                 </textarea>
 
                 <input class="form-check-input" 
@@ -84,6 +84,9 @@
         <br>
 
         <button type="submit" class="btn btn-primary">Salvar</button>
+        <a href="http://<?php echo APP_HOST; ?>/produto">
+           <button type="button" class="btn btn-secondary">Cancelar</button>
+           </a>
 
     </form>
 </div>

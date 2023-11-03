@@ -19,14 +19,14 @@ class ProdutoController extends Controller
 
         $busca = isset($_GET['busca']) ? $_GET['busca'] : null;
         $paginaSelecionada = isset($_GET['paginaSelecionada']) ? $_GET['paginaSelecionada'] : 1;
-        $totalPorPagina = 5; 
+        $totalPorPagina = 5;
 
-        $listaProdutos = $produtoDAO->listarPaginacao($busca, $totalPorPagina,$paginaSelecionada);
+        $listaProdutos = $produtoDAO->listarPaginacao($busca, $totalPorPagina, $paginaSelecionada);
         $paginacao = new Paginacao($listaProdutos);
 
         self::setViewParam('busca', $busca);
-        self::setViewParam('paginacao', $paginacao->criandoLink($busca,"produto"));
-        self::setViewParam("queryString",Paginacao::criandoQuerystring($paginaSelecionada,$busca));
+        self::setViewParam('paginacao', $paginacao->criandoLink($busca, "produto"));
+        self::setViewParam("queryString", Paginacao::criandoQuerystring($paginaSelecionada, $busca));
         self::setViewParam("listaProdutos", $listaProdutos["resultado"]);
         $this->render("produto/index");
 
@@ -123,23 +123,23 @@ class ProdutoController extends Controller
 
     public function edicao($params)
     {
-       
+
         $codigo = $params[0];
 
         $produtoDAO = new ProdutoDAO();
 
         $produto = $produtoDAO->getById($codigo);
-        $busca              = isset($_GET['busca']) ? $_GET['busca'] : null;
+        $busca = isset($_GET['busca']) ? $_GET['busca'] : null;
         if (!$produto) {
             Sessao::gravaMensagem("Produto (codigo:{$codigo}) inexistente.");
             $this->redirect('/produto');
         }
         $tipoProduto = new TipoProdutoDAO();
-        
+
         self::setViewParam('listaTipo', $tipoProduto->listar());
         self::setViewParam('produto', $produto);
-        self::setViewParam('queryString', Paginacao::criandoQuerystring($_GET['paginaSelecionada'],$busca));
-       
+        self::setViewParam('queryString', Paginacao::criandoQuerystring($_GET['paginaSelecionada'], $busca));
+
         $this->render('/produto/editar');
 
         Sessao::limpaMensagem();
@@ -174,34 +174,36 @@ class ProdutoController extends Controller
         $produtoValidador = new ProdutoValidador();
         $resultadoValidacao = $produtoValidador->validar($produto);
 
-        if($resultadoValidacao->getErros()){
+        if ($resultadoValidacao->getErros()) {
             Sessao::gravaErro($resultadoValidacao->getErros());
-            $this->redirect('/produto/edicao/'.$_POST['cod']);
+            $this->redirect('/produto/edicao/' . $_POST['cod']);
         }
 
         try {
 
             $dir = 'public/image/produtos';
-            $file = $dir .'/'.$_POST['imagem0'];
+            $file = $dir . '/' . $_POST['imagem0'];
 
             if (empty($_POST['imagem1'])) {
-                if (file_exists($file)) unlink($file);
+                if (file_exists($file))
+                    unlink($file);
             }
 
-            if (!empty($_FILES['imagem']['name'])) {      
+            if (!empty($_FILES['imagem']['name'])) {
                 $objUpload = new Upload($_FILES['imagem']);
-                $objUpload->setName('img-id'.$produto->getCodigo());
+                $objUpload->setName('img-id' . $produto->getCodigo());
                 $produto->setImageUrl($objUpload->getBasename());
 
-                if (file_exists($file)) unlink($file);
-                
-                $sucesso = $objUpload->upload($dir); 
-    
+                if (file_exists($file))
+                    unlink($file);
+
+                $sucesso = $objUpload->upload($dir);
+
                 if (!$sucesso) {
-                    $resultadoValidacao->addErro('imagem',"Imagem: Problemas ao enviar a imagem do produto. Código de erro: ".$objUpload->getError());
+                    $resultadoValidacao->addErro('imagem', "Imagem: Problemas ao enviar a imagem do produto. Código de erro: " . $objUpload->getError());
                     Sessao::gravaErro($resultadoValidacao->getErros());
-                    $this->redirect('/produto'.$_POST['cod'].'?busca='.$_GET['busca'].'&paginaSelecionada='.$_GET['paginaSelecionada']);
-                }               
+                    $this->redirect('/produto' . $_POST['cod'] . '?busca=' . $_GET['busca'] . '&paginaSelecionada=' . $_GET['paginaSelecionada']);
+                }
             }
 
             $produtoDAO = new ProdutoDAO();
@@ -220,5 +222,50 @@ class ProdutoController extends Controller
 
         $this->redirect('/produto');
     }
+
+
+    public function exclusao($params)
+    {
+        $busca = isset($_GET['busca']) ? $_GET['busca'] : null;
+        $id = $params[0];
+        $produtoDAO = new ProdutoDAO();
+        
+        $produto = $produtoDAO->getById($id);
+        
+        if (!$produto) {
+            Sessao::gravaMensagem("Produto (id:{$id}) inexistente.");
+            $this->redirect('/produto');
+        }
+        
+        self::setViewParam('produto', $produto);
+        self::setViewParam('queryString', Paginacao::criandoQuerystring($_GET['paginaSelecionada'],$busca));
+        
+       
+        $this->render('/produto/exclusao');
+
+        Sessao::limpaMensagem();
+        Sessao::limpaErro();
+    }
+
+    public function excluir()
+    {
+        $produto = new Produto();
+        $produto->setCodigo($_POST['cod']);
+        $produto->setNome($_POST['nome']);
+        $produto->setImageUrl($_POST['imagem']);
+
+        $produtoDAO = new ProdutoDAO();
+
+        if (!$produtoDAO->excluir($produto)) {
+            Sessao::gravaMensagem("Produto (id:{$produto->getCodigo()}) inexistente.");
+            $this->redirect('/produto');
+        }
+
+        Sessao::gravaMensagem("Produto '{$produto->getNome()}' excluido com sucesso!");
+
+        $this->redirect('/produto');
+    }
 }
+
+
 ?>

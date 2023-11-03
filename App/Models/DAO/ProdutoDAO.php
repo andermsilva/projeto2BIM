@@ -207,6 +207,22 @@ class ProdutoDAO extends BaseDAO
         }
     }
 
+    public function excluir(Produto $produto)
+    {
+        try {
+
+            $id = $produto->getCodigo();
+            $file = 'public/image/produtos/'.$produto->getImageUrl();
+
+            if (file_exists($file)) unlink($file);
+
+            return $this->delete('produto',"codigo = $id");
+
+        }catch (\Exception $e){
+            throw new \Exception("Erro ao deletar" . $e->getMessage(), 500);
+        }
+    }
+
 }
 
 
