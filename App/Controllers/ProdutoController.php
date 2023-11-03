@@ -15,18 +15,29 @@ class ProdutoController extends Controller
 
     public function index()
     {
-        $produtos = new ProdutoDAO();
+        $produtoDAO = new ProdutoDAO();
 
         $busca = isset($_GET['busca']) ? $_GET['busca'] : null;
-        self::setViewParam("listaProdutos", $produtos->listar());
+        $paginaSelecionada = isset($_GET['paginaSelecionada']) ? $_GET['paginaSelecionada'] : 1;
+        $totalPorPagina = 5; 
 
+        $listaProdutos = $produtoDAO->listarPaginacao($busca, $totalPorPagina,$paginaSelecionada);
+        $paginacao = new Paginacao($listaProdutos);
 
+        self::setViewParam('busca', $busca);
+        self::setViewParam('paginacao', $paginacao->criandoLink($busca,"produto"));
+        self::setViewParam("queryString",Paginacao::criandoQuerystring($paginaSelecionada,$busca));
+        self::setViewParam("listaProdutos", $listaProdutos["resultado"]);
         $this->render("produto/index");
+
+        Sessao::limpaErro();
+        Sessao::limpaMensagem();
 
     }
 
     public function cadastro()
     {
+
         $tipo = new TipoProdutoDAO();
         self::setViewParam("listaTipo", $tipo->listar());
         $this->render("produto/cadastro");
@@ -35,16 +46,14 @@ class ProdutoController extends Controller
 
     public function salvar()
     {
+        $promo = null;
+        if (isset($_POST["promo"])) {
 
-    
-         $promo = null;
-        if (isset($_POST["promo"])){
-           
             $promo = true;
-        }else{
+        } else {
 
             $promo = '0';
-          
+
         }
 
         $tipo = new TipoProduto();
@@ -58,7 +67,7 @@ class ProdutoController extends Controller
         $produto->setTipoProduto($tipo);
         $produto->setPromo($promo);
         $produto->setImageUrl("");
-  
+
         Sessao::gravaFormulario($_POST);
 
         $produtoValidador = new ProdutoValidador();
@@ -74,16 +83,16 @@ class ProdutoController extends Controller
 
             $lastId = $produtoDAO->salvar($produto);
             $produto->setCodigo($lastId);
-           /*  var_dump($_POST);
-            echo '<br>';
-            var_dump($_FILES);exit;  */
+            /*  var_dump($_POST);
+             echo '<br>';
+             var_dump($_FILES);exit;  */
             if (!empty($_FILES['imagem']['name'])) {
-               
+
                 $objUpload = new Upload($_FILES['imagem']);
                 $objUpload->setName('img-id' . $lastId);
                 $produto->setImageUrl($objUpload->getBasename());
                 $dir = 'public/image/produtos';
-               //var_dump($objUpload->upload($dir));exit;
+                //var_dump($objUpload->upload($dir));exit;
 
 
                 $sucesso = $objUpload->upload($dir);
@@ -97,7 +106,7 @@ class ProdutoController extends Controller
                 Sessao::limpaFormulario();
                 Sessao::limpaMensagem();
                 Sessao::limpaErro();
-        
+
                 Sessao::gravaMensagem("Produto adicionado com sucesso!");
                 $produtoDAO->atualizarImagem($produto);
                 $this->redirect('/produto');
@@ -120,7 +129,7 @@ class ProdutoController extends Controller
 
         $produto = $produtoDAO->getById($codigo);
 
-        if(!$produto){
+        if (!$produto) {
             Sessao::gravaMensagem("Produto (codigo:{$codigo}) inexistente.");
             $this->redirect('/produto');
         }
@@ -128,7 +137,7 @@ class ProdutoController extends Controller
         $fornecedorDAO = new TipoProdutoDAO();
 
         self::setViewParam('listaFornecedores', $fornecedorDAO->listar());
-        self::setViewParam('produto',$produto);
+        self::setViewParam('produto', $produto);
         self::setViewParam('queryString', Paginacao::criandoQuerystring($_GET['paginaSelecionada'], $_GET['busca']));
 
         $this->render('/produto/editar');

@@ -22,12 +22,10 @@ class ProdutoDAO extends BaseDAO
                     p.preco,
                     p.peso,
                     p.descricao,
-                    t.tipocod as tipocod
-                    t.tipo_nome as tipo
+                    t.tipocod as tipocod,
+                    t.tipo_nome as tipo,
                     p.imageurl
-                FROM produto as p INNER JOIN tipoproduto as t ON p.tipocod = t.tipocod
-                WHERE p.codigo = $id
-            "
+                FROM produto as p INNER JOIN tipoproduto as t ON p.tipocod = t.tipocod  WHERE p.codigo = $id"
         );
 
         $dataSetProduto = $resultado->fetch();
@@ -35,7 +33,7 @@ class ProdutoDAO extends BaseDAO
         if($dataSetProduto) {
             $produto = new Produto();
             $produto->setCodigo($dataSetProduto['codigo']);
-            $produto->setNome($dataSetProduto['nomeProduto']);
+            $produto->setNome($dataSetProduto['nome']);
             $produto->setPreco($dataSetProduto['preco']);
             
             $produto->setDescricao($dataSetProduto['descricao']);
@@ -104,6 +102,65 @@ class ProdutoDAO extends BaseDAO
         } catch (\Exception $e) {
             throw new \Exception("Erro na gravação de dados." . $e->getMessage(), 500);
         }
+    }
+
+    public function listarPaginacao($busca = null, $totalPorPagina = 6, $paginaSelecionada = 1)
+    {
+        $inicio     = (($paginaSelecionada - 1) * $totalPorPagina);
+        $whereBusca = ($busca) ? "AND (p.nome LIKE '%$busca%' OR p.descricao LIKE '%$busca%')" : '';
+
+        $resultadoTotal = $this->select(
+            "SELECT count(*) as total 
+                FROM produto as p,tipoproduto as t 
+                WHERE p.tipocod = t.tipocod
+                {$whereBusca}"
+        );
+
+        $resultado = $this->select(
+            "SELECT p.codigo,
+                    p.nome ,
+                    p.preco,
+                    p.peso,
+                    p.descricao,
+                    t.tipocod ,
+                    t.tipo_nome as tipo ,
+                    p.imageurl,
+                    p.promo
+                FROM produto as p,tipoproduto as t
+                WHERE p.tipocod = t.tipocod
+                {$whereBusca} 
+                LIMIT {$inicio}, {$totalPorPagina}"
+        );
+
+        $dataSetProdutos    = $resultado->fetchAll();
+        $totalLinhas        = $resultadoTotal->fetch()['total'];
+        $listaProdutos      = [];
+
+        if($dataSetProdutos) {
+
+            foreach($dataSetProdutos as $dataSetProduto) {
+                
+                $produto = new Produto();
+                $produto->setCodigo($dataSetProduto['codigo']);
+                $produto->setNome($dataSetProduto['nome']);
+                $produto->setPreco($dataSetProduto['preco']);
+                $produto->setPeso($dataSetProduto['peso']);
+                $produto->setPromo($dataSetProduto['promo']);
+                $produto->setDescricao($dataSetProduto['descricao']);
+                                
+                $produto->getTipoProduto()->setTipocod($dataSetProduto['tipocod']);
+                $produto->getTipoProduto()->setTipo_nome($dataSetProduto['tipo']);
+                $produto->setImageurl($dataSetProduto['imageurl']);
+
+                $listaProdutos[] = $produto;
+            }
+            
+        }
+
+        return ['paginaSelecionada' => $paginaSelecionada,
+                'totalPorPagina'    => $totalPorPagina,
+                'totalLinhas'       => $totalLinhas,
+                'resultado'         => $listaProdutos];
     }
 
 }
