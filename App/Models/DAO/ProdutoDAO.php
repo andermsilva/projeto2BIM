@@ -163,64 +163,10 @@ class ProdutoDAO extends BaseDAO
 
         }
 
-        return [
-            'paginaSelecionada' => $paginaSelecionada,
-            'totalPorPagina' => $totalPorPagina,
-            'totalLinhas' => $totalLinhas,
-            'resultado' => $listaProdutos
-        ];
-    }
-
-
-
-    public function atualizar(Produto $produto)
-    {
-        try {
-
-            $id = $produto->getCodigo();
-            $nome = $produto->getNome();
-            $preco = $produto->getPreco();
-            $peso = $produto->getPeso();
-            $promo = $produto->getPromo();
-            $descricao = $produto->getDescricao();
-            $tipo = $produto->getTipoProduto()->getTipocod();
-            $imagem = $produto->getImageUrl();
-
-            return $this->update(
-                'produto',
-                "tipocod = :tipocod, nome = :nome, descricao = :descricao, preco = :preco, promo = :promo, imageurl= :imageurl,peso= :peso",
-                [
-                    ':codigo' => $id,
-                    ':tipocod' => $tipo,
-                    ':nome' => $nome,
-                    ':descricao' => $descricao,
-                    ':preco' => $preco,
-                    ':promo' => $promo,
-                    ':imageurl' => $imagem,
-                    ':peso' => $peso
-                ],
-                "codigo = :codigo"
-            );
-
-        } catch (\Exception $e) {
-            throw new \Exception("Erro na gravação de dados." . $e->getMessage(), 500);
-        }
-    }
-
-    public function excluir(Produto $produto)
-    {
-        try {
-
-            $id = $produto->getCodigo();
-            $file = 'public/image/produtos/'.$produto->getImageUrl();
-
-            if (file_exists($file)) unlink($file);
-
-            return $this->delete('produto',"codigo = $id");
-
-        }catch (\Exception $e){
-            throw new \Exception("Erro ao deletar" . $e->getMessage(), 500);
-        }
+        return ['paginaSelecionada' => $paginaSelecionada,
+                'totalPorPagina'    => $totalPorPagina,
+                'totalLinhas'       => $totalLinhas,
+                'resultado'         => $listaProdutos];
     }
 
 }
