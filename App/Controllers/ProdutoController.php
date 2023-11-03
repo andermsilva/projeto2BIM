@@ -133,7 +133,6 @@ class ProdutoController extends Controller
             Sessao::gravaMensagem("Produto (codigo:{$codigo}) inexistente.");
             $this->redirect('/produto');
         }
-
         $fornecedorDAO = new TipoProdutoDAO();
 
         self::setViewParam('listaFornecedores', $fornecedorDAO->listar());
