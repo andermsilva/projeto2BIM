@@ -4,7 +4,7 @@
     foreach ($viewVar["listaProdutos"] as $produto) {
        // echo $produto->getImageUrl();
         ?>
-        <div class="card shadow mb-4 ms-4" style="width: 18rem;">
+        <div class="card shadow mb-4 ms-4 corfundo2" style="width: 18rem;">
        
       
       <img src="http://<?php echo APP_HOST; ?>/public/image/produtos/<?php echo $produto->getImageUrl();?>" class="img_card" alt="..."> 
