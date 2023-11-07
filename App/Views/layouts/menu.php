@@ -13,7 +13,7 @@
             <a class="nav-link active text-light" aria-current="page" href="http://<?php echo APP_HOST; ?>">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-light" href="#">Produtos</a>
+            <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/produto">Produtos</a>
           </li>
           <li class="nav-item">
             <a class="nav-link text-light" href="#">Pedidos</a>
@@ -27,22 +27,34 @@
           <img src="http://<?php echo APP_HOST; ?>/public/image/carrinho.svg" width="20">&nbsp;
           <span class="qtd-car">03</span>
         </a> &nbsp;
-        <div class="dropdown" style="margin-right: 80px;">
-          <button class="btn  dropdown-toggle text-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            user
-          </button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" style="width: 30px;" href="#">minha conta</a></li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
+        <?php if (isset($_SESSION['loggedin'])) { ?>
+          <div class="dropdown" style="margin-right: 80px;">
+            <button class="btn  dropdown-toggle text-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              user
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" style="width: 30px;" href="#">minha conta</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
 
-            <li><a class="dropdown-item" style="width: 30px;" href="#">logout
+              <li><a class="dropdown-item" style="width: 30px;" href="#">logout
 
-              </a></li>
-          </ul>
-        </div>
+                </a></li>
+            </ul>
+          </div>
+        <?php } else { ?>
+          <div class="" style="margin-right: 80px;">
+            <a href="http://<?php echo APP_HOST; ?>/login" class="dropdown-item">
+              Entrar/Cadastrar
+            </a>
+
+          </div>
+          <?php
+
+        } ?>
       </div>
+
     </div>
   </nav>
 

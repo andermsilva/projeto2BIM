@@ -46,7 +46,8 @@
                 <label for="imagem">Imagem</label>
                 <input type="file" class="form-control" id="imagem" name="imagem" accept="image/*">
                 <p class="help-block">JPG, PNG ou GIF.</p>
-                <p><img id="foto" data-src="holder.js/180x180" src="" width="180" class="img-fluid"
+                <p><img id="foto" data-src="holder.js/180x180" 
+                src="" width="180" class="img-fluid"
                         alt="Imagem Produto"></p>
             </div>
 
