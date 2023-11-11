@@ -14,7 +14,7 @@
 
 
 
- echo APP_HOST; ?>">Home</a>
+            echo APP_HOST; ?>">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/produto">Produtos</a>
@@ -25,6 +25,16 @@
           <li class="nav-item">
             <a class="nav-link text-light" href="#">Sobre</a>
           </li>
+
+          <?php
+          if (isset($_SESSION['loggedin']) && isset($_SESSION['username'])) { ?>
+
+            <li class="nav-item">
+              <a class="nav-link text-light" href="#">Gerenciar Produto</a>
+            </li>
+
+          <?php } ?>
+
         </ul>
         <a href="" class="nav-link text-light">
 
@@ -34,11 +44,12 @@
         <?php if (isset($_SESSION['loggedin']) && isset($_SESSION['username'])) { ?>
           <div class="dropdown" style="margin-right: 80px;">
             <button class="btn  dropdown-toggle text-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <?php echo substr($_SESSION['username'],0,8)?>
-             
+              <?php echo substr($_SESSION['username'], 0, 8) ?>
+
             </button>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" style="width: 30px;" href="http://<?php echo APP_HOST; ?>/usuario/dashboard">minha conta</a></li>
+              <li><a class="dropdown-item" style="width: 30px;"
+                  href="http://<?php echo APP_HOST; ?>/usuario/dashboard">minha conta</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>

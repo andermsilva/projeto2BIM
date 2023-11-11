@@ -14,7 +14,7 @@ use App\Lib\Sessao;
         <div class="alert alert-warning" role="alert">
             <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <?php foreach ($Sessao::retornaErro() as $key => $mensagem) {
-                echo $mensagem . "<br />";
+                echo $mensagem . "!<br />";
             } ?>
         </div>
     <?php } ?>
@@ -44,15 +44,21 @@ use App\Lib\Sessao;
 
         </form>
     </div>
-    <div class="bg-info" style="width: 500px;">
+    <div class="bg-info d-none" style="width: 500px;">
 
-        <form>
+        <form method="post" action="http://<?php APP_HOST?>/usuario/registrar" >
             <h2 class="text-center">
                 Cadastre-se
             </h2>
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome</label>
                 <input type="nome" class="form-control" id="nome">
+                <input type="hidden" value="user" name="tipo">
+
+            </div>
+            <div class="mb-3">
+                <label for="cpf" class="form-label">CPF</label>
+                <input type="cpf" class="form-control" id="cpf">
 
             </div>
             <div class="mb-3">
@@ -61,8 +67,18 @@ use App\Lib\Sessao;
 
             </div>
             <div class="mb-3">
-                <label for="nickname" class="form-label">NickName</label>
-                <input type="nickname" class="form-control" id="nickname">
+                <label for="sexo" class="form-label">Sexo</label>
+                <select class="form-select" name="tipo">
+                    <option value="">Informe seu sexo</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Feminino</option>
+                    <option value="N">Prefiro não informar</option>
+                </select>
+
+            </div>
+            <div class="mb-3">
+                <label for="whatsapp" class="form-label">WhatsApp</label>
+                <input type="whatsapp" class="form-control" id="whatsapp">
 
             </div>
             <label for="email" class="form-label">Email</label>
