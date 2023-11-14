@@ -15,6 +15,9 @@ class ProdutoController extends Controller
 
     public function index()
     {
+        Sessao::limpaErro();
+        Sessao::limpaMensagem();
+
         $produtoDAO = new ProdutoDAO();
 
         $busca = isset($_GET['busca']) ? $_GET['busca'] : null;

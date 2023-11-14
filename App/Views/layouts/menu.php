@@ -30,7 +30,10 @@
           if (isset($_SESSION['loggedin']) && isset($_SESSION['username'])) { ?>
 
             <li class="nav-item">
-              <a class="nav-link text-light" href="#">Gerenciar Produto</a>
+              <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/produto">Gerenciar Produto</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/tipoproduto">Tipo </a>
             </li>
 
           <?php } ?>

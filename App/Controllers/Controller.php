@@ -30,7 +30,7 @@ abstract class Controller
    
     $viewVar = $this->getViewVar();
     $Sessao = Sessao::class;
-    /*  var_dump($viewVar);exit; */
+     
     require_once PATH . '/App/Views/layouts/header.php';
     require_once PATH . '/App/Views/layouts/menu.php';
     require_once PATH . '/App/Views/' . $view . '.php';

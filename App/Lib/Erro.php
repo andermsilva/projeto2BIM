@@ -13,13 +13,14 @@ class Erro
     {
         $this->code     = $objetoException->getCode();
         $this->message  = $objetoException->getMessage();
+    
     }
 
     public function render()
     {
         $viewVar["nameController"] = 'error';
         $varMessage = $this->message;
-
+        
         require_once PATH . '/App/Views/layouts/header.php';
         require_once PATH . '/App/Views/layouts/menu.php';
 
