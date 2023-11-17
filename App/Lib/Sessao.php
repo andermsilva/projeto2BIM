@@ -5,14 +5,16 @@ namespace App\Lib;
 
 class Sessao{
 
-    public static function gravaLogin($iduser, $username){
+    public static function gravaLogin($iduser, $username,$tp){
         $_SESSION['loggedin'] = true;
         $_SESSION['iduser'] = $iduser;
         $_SESSION['username'] = $username;
+        $_SESSION['tipo'] =$tp;
     }
-
+    
     public static function limpaLogin(){
         $_SESSION['loggedin'] = false;
+        $_SESSION['tipo'] = false;
         unset($_SESSION['iduser']);
         unset($_SESSION['username']);       
     }
@@ -55,6 +57,40 @@ class Sessao{
 
     public static function limpaErro(){
         unset($_SESSION['erro']);
+    }
+
+    public static function GravarCarrinho($array){
+      
+        $aux = [];
+        if (empty($_SESSION['carrinho'])) {
+            $_SESSION['carrinho'] = [];
+        }
+        $aux = $array;
+      //  var_dump( $_SESSION['carrinho']);exit;
+        $test = false;
+        foreach ($_SESSION['carrinho'] as $key => $value) {
+            if (isset($value[0])) {
+                 
+                if ($value[0] == $array[0]) {
+                    $_SESSION['carrinho'][$key][1] += $array[1];
+                    $test = true;
+                }
+            }
+        }
+        if(!$test){
+          array_push($_SESSION['carrinho'], $aux);
+        }
+       // header("Location: cardapio.php");
+
+    }
+
+    public static function retornarCarrinho() {
+
+    return isset($_SESSION['carrinho']) ? $_SESSION['carrinho'] : false;
+    }
+    public static function limparCarrinho() {
+        unset($_SESSION['carrinho']);
+        unset($_POST['']);
     }
 }
 ?>

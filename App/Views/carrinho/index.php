@@ -1,6 +1,6 @@
 <div class="container-sm" style="width: 400px;">
 
-    <h2>Tipos de produtos</h2>
+    <h2>Carrinho de compras</h2>
     <?php
  /*    if ($_SESSION['erro']) {
 
@@ -16,8 +16,8 @@
 
     <div>
 
-        <a class="" href="http://<?php echo APP_HOST ?>/tipoproduto/cadastro">
-            <button type="button" class="btn btn-success">Novo</button>
+        <a class="" href="http://<?php echo APP_HOST ?>/pedido/esvaziar">
+            <button type="button" class="btn btn-secondary">Esvaziar</button>
         </a>
     </div>
 
@@ -34,22 +34,22 @@
 
             <?php
             // var_dump($viewVar["listaTipos"][5]);exit;
-            for ($i = 0; $i < count($viewVar["listaTipos"]); $i++) {
+            /* for ($i = 0; $i < count($viewVar["listaTipos"]); $i++) {
                 $tipo = $viewVar["listaTipos"][$i];
                 $cor = "";
                 if ($i % 2 == 0) {
                     $cor = 'table-primary';
                 } else {
                     $cor = 'table-warning';
-                }
+                } */
                 ?>
 
-                <tr <?php echo "class = '" . $cor . "'" ?> >
+                <tr <?php //echo "class = '" . $cor . "'" ?> >
                     <td>
-                        <?php echo $tipo->getTipocod() ?>
+                        <?php //echo $tipo->getTipocod() ?>
                     </td>
                     <td>
-                        <?php echo $tipo->getTipo_nome() ?>
+                        <?php //echo $tipo->getTipo_nome() ?>
                     </td>
                     <td class="d-flex item-justfy-center">
                         <div>
@@ -74,7 +74,7 @@
 
 
 
-            <?php } ?>
+            <?php // } ?>
         </tbody>
     </table>
 

@@ -86,9 +86,7 @@ class ProdutoController extends Controller
 
             $lastId = $produtoDAO->salvar($produto);
             $produto->setCodigo($lastId);
-            /*  var_dump($_POST);
-             echo '<br>';
-             var_dump($_FILES);exit;  */
+        
             if (!empty($_FILES['imagem']['name'])) {
 
                 $objUpload = new Upload($_FILES['imagem']);

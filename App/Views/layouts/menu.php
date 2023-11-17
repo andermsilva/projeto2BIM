@@ -27,7 +27,7 @@
           </li>
 
           <?php
-          if (isset($_SESSION['loggedin']) && isset($_SESSION['username'])) { ?>
+          if (isset($_SESSION['loggedin']) && isset($_SESSION['username']) && $_SESSION['tipo']=='admin') { ?>
 
             <li class="nav-item">
               <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/produto">Gerenciar Produto</a>
@@ -39,20 +39,21 @@
           <?php } ?>
 
         </ul>
-        <a href="" class="nav-link text-light">
+        <a href="http://<?php echo APP_HOST; ?>/pedido/carrpedido" class="nav-link text-light">
 
           <img src="http://<?php echo APP_HOST; ?>/public/image/carrinho.svg" width="20">&nbsp;
-          <span class="qtd-car">03</span>
+          <span class="qtd-car"><?php echo (isset($_SESSION['carrinho']))? count($_SESSION['carrinho']):'0'?></span>
         </a> &nbsp;
         <?php if (isset($_SESSION['loggedin']) && isset($_SESSION['username'])) { ?>
-          <div class="dropdown" style="margin-right: 80px;">
+          
+          <div class="dropdown" style="margin-right: 40px;">
             <button class="btn  dropdown-toggle text-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <?php echo substr($_SESSION['username'], 0, 8) ?>
-
+               <?php echo substr($_SESSION['username'], 0, 8) ?>
             </button>
+                   
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" style="width: 30px;"
-                  href="http://<?php echo APP_HOST; ?>/usuario/dashboard">minha conta</a></li>
+                  href="http://<?php echo APP_HOST; ?>/login/dashboard">minha conta</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>

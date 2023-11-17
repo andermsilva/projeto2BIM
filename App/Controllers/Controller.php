@@ -27,7 +27,7 @@ abstract class Controller
 
   public function render($view)
   {
-   
+   //var_dump($view);exit;
     $viewVar = $this->getViewVar();
     $Sessao = Sessao::class;
      
@@ -40,6 +40,7 @@ abstract class Controller
   
   public function redirect($view)
   {
+    //var_dump($view);exit;
     header('Location: http://' . APP_HOST . $view);
     exit;
   }

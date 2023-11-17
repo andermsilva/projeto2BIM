@@ -10,7 +10,7 @@ class ProdutoDAO extends BaseDAO
 {
     public function listar()
     {
-        $resultado = $this->select("SELECT * FROM produto order by nome; ");
+        $resultado = $this->select("SELECT * FROM produto order by tipocod; ");
         return $resultado->fetchAll(\PDO::FETCH_CLASS, Produto::class);
     }
 

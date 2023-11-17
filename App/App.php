@@ -85,8 +85,10 @@ class App
             return;
         } else if (!$this->action && method_exists($objetoController, 'index')) {
             $objetoController->index($this->params);
+           
             return;
         } else {
+          
             throw new Exception("Nosso suporte já esta verificando desculpe!", 500);
         }
         throw new Exception("Página não encontrada.", 404);
