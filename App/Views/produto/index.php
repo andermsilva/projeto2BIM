@@ -117,7 +117,7 @@ if (isset($_SESSION["tipo"]) && $_SESSION['tipo'] == 'admin') { ?>
             </tbody>
         </table>
     <?php } else { 
-        var_dump($_SESSION['carrinho']);
+       
         ?>
 
 

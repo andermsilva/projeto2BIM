@@ -12,6 +12,10 @@ class Sessao{
         $_SESSION['tipo'] =$tp;
     }
     
+    public static function gravaEndereco($endereco){
+
+        $_SESSION['endereco'] = $endereco;
+    }
     public static function limpaLogin(){
         $_SESSION['loggedin'] = false;
         $_SESSION['tipo'] = false;
@@ -59,6 +63,28 @@ class Sessao{
         unset($_SESSION['erro']);
     }
 
+
+    public static function gravarListaPedidos($lista){
+       $_SESSION['listaPedidos'] = $lista;
+    
+
+       $aux=[];
+
+       foreach ($lista as $item) {
+          foreach ($_SESSION['carrinho'] as $nova) {
+            if ($item['cod']== $nova['cod']){
+
+                $aux [] = $nova;
+            }
+          }
+       }
+       $_SESSION['carrinho'] = $aux;
+
+    }
+    public static function limparListaPedidos(){
+
+        unset($_SESSION['listaPedidos']);
+    }
     public static function GravarCarrinho($array){
       
         $aux = [];
@@ -66,31 +92,45 @@ class Sessao{
             $_SESSION['carrinho'] = [];
         }
         $aux = $array;
-      //  var_dump( $_SESSION['carrinho']);exit;
+    
         $test = false;
         foreach ($_SESSION['carrinho'] as $key => $value) {
-            if (isset($value[0])) {
+            if (isset($value['cod'])) {
                  
-                if ($value[0] == $array[0]) {
-                    $_SESSION['carrinho'][$key][1] += $array[1];
+                if ($value['cod'] == $array['cod']) {
+                    $_SESSION['carrinho'][$key]['qtd'] += $array['qtd'];
                     $test = true;
                 }
             }
         }
+       
         if(!$test){
           array_push($_SESSION['carrinho'], $aux);
         }
-       // header("Location: cardapio.php");
 
     }
 
     public static function retornarCarrinho() {
 
-    return isset($_SESSION['carrinho']) ? $_SESSION['carrinho'] : false;
+        return isset($_SESSION['carrinho']) ? $_SESSION['carrinho'] : false;
+    }
+    public static function retornarPedidos() {
+
+        return isset($_SESSION['listaPedidos']) ? $_SESSION['listaPedidos'] : false;
     }
     public static function limparCarrinho() {
         unset($_SESSION['carrinho']);
         unset($_POST['']);
+    }
+   
+
+    public static function gravarPedido($pedido) {
+       $_SESSION['pedido'] = $pedido;
+
+    }
+    public static function retornarPedido() {
+      return isset($_SESSION['pedido'])? $_SESSION['pedido']: false; 
+
     }
 }
 ?>

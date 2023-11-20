@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Lib\Sessao;
 use App\Models\DAO\UsuarioDAO;
+use App\Models\DAO\EnderecoDAO;
 
 class LoginController extends Controller{
 
@@ -30,6 +31,8 @@ class LoginController extends Controller{
         }
         $usuarioDAO = new UsuarioDAO();
         $usuario = $usuarioDAO->autenticar($username, $password);
+           $id = $usuario->getId();
+        
   
         if ($usuario == 0) {
             
@@ -37,7 +40,10 @@ class LoginController extends Controller{
             Sessao::gravaErro($erro);
             $this->redirect('/login');
         }
-      // var_dump($usuario);exit;
+          $end = new EnderecoDAO();
+        //  var_dump($end);exit;
+          Sessao::gravaEndereco( $end->getByIdUser($id));
+
         Sessao::gravaLogin($usuario->getId(),$usuario->getNome(), $usuario->getTipo());
 
         Sessao::limpaFormulario();
@@ -57,7 +63,7 @@ class LoginController extends Controller{
 
         Sessao::limpaMensagem();
     }
-
+  
     public function dashboard(){
 
         $this->render('login/dashboard');
@@ -68,7 +74,8 @@ class LoginController extends Controller{
         Sessao::limpaFormulario();
         Sessao::limpaMensagem();
         Sessao::limpaErro();
-
+        
+       unset($_SESSION["endereco"]);
         $_SESSION["loggedin"] = false;
         $_SESSION['tipo'] = false;
         unset($_SESSION['username']);

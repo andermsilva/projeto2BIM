@@ -1,31 +1,42 @@
-<div class="container-sm" style="width: 400px;">
+<div class="container-sm" style="width: 600px;">
 
     <h2>Carrinho de compras</h2>
     <?php
- /*    if ($_SESSION['erro']) {
+       if (isset($_SESSION['erro'])) {
 
-        echo "<br> <span class='alert alert-warning'> " . $_SESSION['erro'] . " <br> </span>";
-    }
-    if ($_SESSION['mensagem']) {
+           echo "<br> <span class='alert alert-warning'> " . $_SESSION['erro'] . " <br> </span>";
+       }
+       if (isset($_SESSION['mensagem'])) {
 
-        echo " <br> <span class='alert alert-warning'>" . $_SESSION['mensagem'] . " <br> </span>";
-    } */
+           echo " <br> <span class='alert alert-warning'>" . $_SESSION['mensagem'] . " <br> </span>";
+       }
+
+     
 
     ?>
     <hr>
 
-    <div>
+    <div class="d-flex justify-content-between">
 
         <a class="" href="http://<?php echo APP_HOST ?>/pedido/esvaziar">
             <button type="button" class="btn btn-secondary">Esvaziar</button>
+        </a>
+        <a class="" href="http://<?php echo APP_HOST ?>/pagamento">
+            <button type="button" class="btn btn-success">Finalizar Comprar</button>
         </a>
     </div>
 
     <table class="table table-hover">
         <thead>
             <tr>
-                <th scope="col">ID</th>
+                <th scope="col">
+                    foto
+                </th>
                 <th scope="col">Nome</th>
+                <th scope="col">Quantidade</th>
+                <th scope="col">Pseso/ml</th>
+                <th scope="col">Valor</th>
+
                 <th scope="col">Ações</th>
 
             </tr>
@@ -33,36 +44,61 @@
         <tbody>
 
             <?php
-            // var_dump($viewVar["listaTipos"][5]);exit;
-            /* for ($i = 0; $i < count($viewVar["listaTipos"]); $i++) {
-                $tipo = $viewVar["listaTipos"][$i];
+            //var_dump($_SESSION["endereco"]);
+
+            for ($i = 0; $i < count($_SESSION['listaPedidos']); $i++) {
+                $pedido = $_SESSION['listaPedidos'][$i];
                 $cor = "";
                 if ($i % 2 == 0) {
                     $cor = 'table-primary';
                 } else {
                     $cor = 'table-warning';
-                } */
+                }
                 ?>
 
-                <tr <?php //echo "class = '" . $cor . "'" ?> >
-                    <td>
-                        <?php //echo $tipo->getTipocod() ?>
+                <tr <?php echo "class = '" . $cor . "' d-flex" ?>>
+                    <td class="m-auto">
+                        <img src="http://<?php echo APP_HOST; ?>/public/image/produtos/<?php echo $pedido['imagem'] ?>"
+                            width="60" alt="">
+
                     </td>
-                    <td>
-                        <?php //echo $tipo->getTipo_nome() ?>
-                    </td>
-                    <td class="d-flex item-justfy-center">
+
+                    <td class="m-auto">
                         <div>
 
-                            <a class="link-underline"
-                             href="http://<?php echo APP_HOST ?>/tipoproduto/cadastro/<?php echo $tipo->getTipoCod()?>">
-                                <img src="http://<?php echo APP_HOST ?>/public/image/editar.png" width="25" alt="">
-                            </a>
+                            <?php echo $pedido['nome'] ?>
                         </div>
+                    </td>
+
+                    <td>
                         <div>
 
+                            <?php echo $pedido['qtd'] ?>
+                        </div>
+                    </td>
 
-                            <a class="link-underline" href="http://<?php echo APP_HOST ?>/tipoproduto/exclusao">
+                    <td>
+
+
+                        <div>
+                            <?php echo $pedido['peso'] ?>
+
+                        </div>
+                    </td>
+
+                    <td>
+
+                        <div>
+
+                            <?php echo $pedido['valor'] ?>
+                        </div>
+                    </td>
+
+                    <td class="d-flex item-justfy-center" style="height:60px;">
+
+                        <div class="m-auto">
+                            <a class="link-underline mt-2" 
+                            href="http://<?php echo APP_HOST ?>/pedido/alterarPedido/<?php echo $pedido['cod']?>">
                                 <img src="http://<?php echo APP_HOST ?>/public/image/excluir.png" width="25" alt="">
                             </a>
                         </div>
@@ -74,7 +110,7 @@
 
 
 
-            <?php // } ?>
+            <?php } ?>
         </tbody>
     </table>
 

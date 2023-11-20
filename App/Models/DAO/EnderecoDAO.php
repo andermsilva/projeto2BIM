@@ -2,61 +2,129 @@
 
 namespace App\Models\DAO;
 
-use App\Models\Entidades\Produto;
+use App\Models\Entidades\Endereco;
+use App\models\Entidades\Usuario;
 use App\Models\DAO\BaseDAO;
-use App\Models\Entidades\TipoProduto;
 
-class ProdutoDAO extends BaseDAO
+
+class EnderecoDAO extends BaseDAO
 {
     public function listar()
     {
-        $resultado = $this->select("SELECT * FROM produto order by tipocod; ");
-        return $resultado->fetchAll(\PDO::FETCH_CLASS, Produto::class);
+        $resultado = $this->select("SELECT * FROM endereco order by end_cod; ");
+        return $resultado->fetchAll(\PDO::FETCH_CLASS, Endereco::class);
     }
 
 
-    
 
-    public function getById($id)
+
+    public function getByIdUser($id)
     {
         $resultado = $this->select(
-            "SELECT p.codigo,
-                    p.nome ,
-                    p.preco,
-                    p.peso,
-                    p.promo,
-                    p.descricao,
-                    t.tipocod as tipocod,
-                    t.tipo_nome as tipo,
-                    p.imageurl
-                FROM produto as p INNER JOIN tipoproduto as t ON p.tipocod = t.tipocod  WHERE p.codigo = $id"
+            "SELECT u.id, 
+                    u.nome,
+                    e.end_cod,
+                    e.logradouro,
+                    e.cep,
+                    e.numero,
+                    e.comp, 
+                    e.bairro,
+                    e.cidade
+          FROM  usuario u inner join 
+                endereco e on u.id = e.cliente_cli_id
+           WHERE u.id = $id"
         );
 
 
+         
+        $dataSetEndereco = $resultado->fetch();
+       
+        if ($dataSetEndereco) {
+            $endereco = new Endereco();
 
-        //var_dump($resultado);exit;
-        $dataSetProduto = $resultado->fetch();
-        if ($dataSetProduto) {
-            $produto = new Produto();
-            $produto->setCodigo($dataSetProduto['codigo']);
-            $produto->setNome($dataSetProduto['nome']);
-            $produto->setPreco($dataSetProduto['preco']);
-            $produto->setPeso($dataSetProduto['peso']);
-            $produto->setPromo($dataSetProduto['promo']);
+            $endereco->getUsuario()->setId($dataSetEndereco['id']);
+            $endereco->getUsuario()->setNome($dataSetEndereco['nome']);
+            $endereco->setEndCod($dataSetEndereco['end_cod']);
+            $endereco->setLogradouro($dataSetEndereco['logradouro']);
+            $endereco->setCep($dataSetEndereco['cep']);
+            $endereco->setNumero($dataSetEndereco['numero']);
+            $endereco->setComplemento($dataSetEndereco['comp']);
 
-            $produto->setDescricao($dataSetProduto['descricao']);
-            $produto->getTipoProduto()->setTipocod($dataSetProduto['tipocod']);
-            $produto->getTipoProduto()->setTipo_nome($dataSetProduto['tipo']);
-            $produto->setImageUrl($dataSetProduto['imageurl']);
+            $endereco->setBairro($dataSetEndereco['bairro']);
+            $endereco->setCidade($dataSetEndereco['cidade']);
+            
 
-            return $produto;
+            return $endereco->getEndCod();
         }
 
         return false;
     }
 
+    public function listarPorUsuario($id)
+    { 
+        $resultado = $this->select(
+            "SELECT u.id, 
+                    u.nome,
+                    e.end_cod,
+                    e.logradouro,
+                    e.cep,
+                    e.numero,
+                    e.comp, 
+                    e.bairro,
+                    e.cidade
+          FROM  usuario u inner join 
+                endereco e on u.id = e.cliente_cli_id
+           WHERE u.id = $id;");
 
-    public function salvar(Produto $produto)
+            $dataSetEnderecos = $resultado->fetchAll();
+
+          
+
+            $listaEnderecos = [];
+
+            if ($dataSetEnderecos) {
+
+                foreach ($dataSetEnderecos as $dataSetEndereco) {
+
+                    $endereco = new Endereco();
+                                     
+                    $endereco->getUsuario()->setId($dataSetEndereco['id']);
+                   // $endereco->getUsuario()->setNome($dataSetEndereco['nome']);
+                    $endereco->setEndCod($dataSetEndereco['end_cod']);
+                    $endereco->setLogradouro($dataSetEndereco['logradouro']);
+                    $endereco->setCep($dataSetEndereco['cep']);
+                    $endereco->setNumero($dataSetEndereco['numero']);
+                    $endereco->setComplemento($dataSetEndereco['comp']);
+
+                    $endereco->setBairro($dataSetEndereco['bairro']);
+                    $endereco->setCidade($dataSetEndereco['cidade']);
+                  
+                    $listaEnderecos[] = $endereco;
+                }
+
+            }
+
+            return [
+        
+                'result' => $listaEnderecos
+            ];
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+   /*  public function salvar(Produto $produto)
     {
 
         try {
@@ -116,7 +184,7 @@ class ProdutoDAO extends BaseDAO
     {
         $inicio = (($paginaSelecionada - 1) * $totalPorPagina);
         $whereBusca = ($busca) ? "AND (p.nome LIKE '%$busca%' OR p.descricao LIKE '%$busca%')" : '';
-        
+
         $resultadoTotal = $this->select(
             "SELECT count(*) as total 
                 FROM produto as p,tipoproduto as t 
@@ -214,17 +282,18 @@ class ProdutoDAO extends BaseDAO
         try {
 
             $id = $produto->getCodigo();
-            $file = 'public/image/produtos/'.$produto->getImageUrl();
+            $file = 'public/image/produtos/' . $produto->getImageUrl();
 
-            if (file_exists($file)) unlink($file);
+            if (file_exists($file))
+                unlink($file);
 
-            return $this->delete('produto',"codigo = $id");
+            return $this->delete('produto', "codigo = $id");
 
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             throw new \Exception("Erro ao deletar" . $e->getMessage(), 500);
         }
     }
-
+ */
 }
 
 

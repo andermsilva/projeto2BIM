@@ -20,7 +20,10 @@
             <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/produto">Produtos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-light" href="#">Pedidos</a>
+            <a class="nav-link text-light" 
+            
+            href="http://<?php echo APP_HOST; ?>/pedido">
+            Pedidos</a>
           </li>
           <li class="nav-item">
             <a class="nav-link text-light" href="#">Sobre</a>
@@ -44,6 +47,7 @@
           <img src="http://<?php echo APP_HOST; ?>/public/image/carrinho.svg" width="20">&nbsp;
           <span class="qtd-car"><?php echo (isset($_SESSION['carrinho']))? count($_SESSION['carrinho']):'0'?></span>
         </a> &nbsp;
+
         <?php if (isset($_SESSION['loggedin']) && isset($_SESSION['username'])) { ?>
           
           <div class="dropdown" style="margin-right: 40px;">

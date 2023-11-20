@@ -1,8 +1,7 @@
 <h1 class="text-center"><?php echo TITLE;?></h1>
 <div class="container d-flex flex-row mb-3 p-4 flex-wrap align-content-center justify-content-start">
     <?php 
-  /*   use App\Lib\Sessao;
-    Sessao::limparCarrinho(); */
+ 
     foreach ($viewVar["listaProdutos"] as $produto) {
        // echo $produto->getImageUrl();
         ?>
