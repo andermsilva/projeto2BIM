@@ -21,7 +21,7 @@
         <a class="" href="http://<?php echo APP_HOST ?>/pedido/esvaziar">
             <button type="button" class="btn btn-secondary">Esvaziar</button>
         </a>
-        <a class="" href="http://<?php echo APP_HOST ?>/pagamento">
+        <a class="" href="http://<?php echo APP_HOST ?>/pedido/verificar">
             <button type="button" class="btn btn-success">Finalizar Comprar</button>
         </a>
     </div>

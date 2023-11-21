@@ -43,10 +43,9 @@ abstract class BaseDAO
             
             $stmt->bindParam($parametros, $colunas);
             
-         
+          
 
             $stmt->execute($values);
-
 
             return $this->conexao->lastInsertId();
         } else {

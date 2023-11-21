@@ -3,9 +3,11 @@
 namespace App\Models\DAO;
 
 use App\Models\DAO\BaseDAO;
-use App\Models\DAO\ProdutoPedidoDAO;;
+use App\Models\DAO\ProdutoPedidoDAO;
+use App\Models\DAO\PagamentoDAO;
 use App\Models\Entidades\Pedido;
 use App\Models\Entidades\ProdutoPedido;
+use APP\Models\Entidades\TipoPagamento;
 
 class PedidoDAO extends BaseDAO
 {
@@ -30,8 +32,8 @@ class PedidoDAO extends BaseDAO
           inner join tipo_pagamento pg on pg.cod = tipo_pgto_cod
         
           WHERE u.id = {$_SESSION['iduser']} LIMIT {$inicio}, {$totalPorPagina};");
-     // var_dump($resultado);exit;
-     
+      // var_dump($resultado);exit;
+
       $dataSetPedidos = $resultado->fetchAll();
       $totalLinhas = $resultadoTotal->fetch()['total'];
 
@@ -42,15 +44,15 @@ class PedidoDAO extends BaseDAO
 
          foreach ($dataSetPedidos as $dataSetPedido) {
 
-          $produtoPedido = new ProdutoPedido();
-          $prodPed = new ProdutoPedidoDAO();
+            $produtoPedido = new ProdutoPedido();
+            $prodPed = new ProdutoPedidoDAO();
 
-          
-           $result = $prodPed->listaProdutoPedidoById($dataSetPedido['pnum']); 
 
-           $qtde = $result[0]['teste'];
-         
-           // $resultado->fetch();
+            $result = $prodPed->listaProdutoPedidoById($dataSetPedido['pnum']);
+
+            $qtde = $result[0]['teste'];
+
+            // $resultado->fetch();
 
             $pedido = new Pedido();
             $pedido->setPed_num($dataSetPedido['pnum']);
@@ -66,45 +68,122 @@ class PedidoDAO extends BaseDAO
             $listaPedidos[] = $pedido;
 
          }
-        // var_dump($listaPedidos);exit;
+         // var_dump($listaPedidos);exit;
          return [
             'paginaSelecionada' => $paginaSelecionada,
             'totalPorPagina' => $totalPorPagina,
             'totalLinhas' => $totalLinhas,
             'resultado' => $listaPedidos,
-            'contagem' =>$result
-             
+            'contagem' => $result
+
          ];
 
       }
    }
 
-   public function salvar(Pedido $pedido){
+   public function salvar(Pedido $pedido)
+   {
 
-   try {
+      try {
+         
+         $pgto = $pedido->getTipoPagamento()->getCod();
+         $cliId = $pedido->getUsuario()->getId();
+         $valor = $pedido->getValor();
+         $end = $pedido->getEndereco()->getEndCod();
 
-     $pgto = $pedido->getTipoPagamento()->getCod();
-     $cliId = $pedido->getUsuario()->getId();
-     $valor = $pedido->getValor();
-     $end = $pedido->getEndereco()->getEndCod();
-     
-     
-     return $this->insert(
-          'pedido',
-          ":tipo_pgto_cod, cliente_id,:valor_total,:end_cod",
-          [
-            ':tipo_pgto_cod' => $pgto,
-            ':cliente_id' => $cliId,
-            ':valor_total'=> $valor,
-            ':end_cod'=> $end,
+
+         return $this->insert(
+            'pedido',
+            ":tipo_pgto_cod, :cliente_id,:valor_total,:end_cod",
+            [
+               ':tipo_pgto_cod' => $pgto,
+               ':cliente_id' => $cliId,
+               ':valor_total' => $valor,
+               ':end_cod' => $end,
+
+            ]
+         );
+      } catch (\Exception $e) {
+         
+         /* echo 'aqui5';
+         echo '<hr>';
+         var_dump($e->getMessage()); */
+         
+         //exit;
+         throw new \Exception("Erro na gravação de dados." . $e->getMessage(), 500);
+      }
+
+
+
+   }
+
+   
+   public function salvarLista(ProdutoPedido $pedido)
+   {
+      
+      try {
            
-          ]
+         $pcod = $pedido->getProduto()->getCodigo();
+         $ppedNum = $pedido->getPedido()->getPed_num();
+         $qtd = $pedido->getQtde();
+         $total = $pedido->getSutotal(); 
+         $preco = $pedido->getValorUnitario();
+        
+
+         return $this->insert(
+            'produto_has_pedido',
+            ":produto_codigo,:pedido_ped_num,:qtde,:valorUnitario,:subtotal",
+            [
+               ':produto_codigo' => $pcod,
+               ':pedido_ped_num' => $ppedNum,
+               ':qtde'=> $qtd,
+               ':valorUnitario'=> $preco,
+               ':subtotal'=> $total
+
+            ]
+         );
+      } catch (\Exception $e) {
+
+         throw new \Exception("Erro na gravação de dados." . $e->getMessage(), 500);
+      }
+
+
+
+   }
+
+
+   public function getAll()
+   {
+      $resultado = $this->select(
+         "SELECT cod, nome FROM tipo_pagamento ORDER BY cod;"
       );
-  } catch (\Exception $e) {
 
-      throw new \Exception("Erro na gravação de dados." . $e->getMessage(), 500);
-  }
+      $dataSetTipos = $resultado->fetchAll();
 
+
+
+      $listaTipos = [];
+
+      if ($dataSetTipos) {
+
+         foreach ($dataSetTipos as $dataSetTipo) {
+
+
+
+            $tipo = new TipoPagamento();
+
+            $tipo->setCod($dataSetTipo['cod']);
+            $tipo->setNome($dataSetTipo['nome']);
+
+            $listaTipos[] = $tipo;
+         }
+
+      }
+
+      return [
+
+         'resultado' => $listaTipos
+      ];
 
 
    }

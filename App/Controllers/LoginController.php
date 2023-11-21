@@ -31,8 +31,10 @@ class LoginController extends Controller{
         }
         $usuarioDAO = new UsuarioDAO();
         $usuario = $usuarioDAO->autenticar($username, $password);
-           $id = $usuario->getId();
-        
+      
+       // var_dump($usuario);exit;
+         
+      /*   $id = $usuario->getId(); */
   
         if ($usuario == 0) {
             
@@ -40,10 +42,10 @@ class LoginController extends Controller{
             Sessao::gravaErro($erro);
             $this->redirect('/login');
         }
-          $end = new EnderecoDAO();
+        /*   $end = new EnderecoDAO();
         //  var_dump($end);exit;
           Sessao::gravaEndereco( $end->getByIdUser($id));
-
+ */
         Sessao::gravaLogin($usuario->getId(),$usuario->getNome(), $usuario->getTipo());
 
         Sessao::limpaFormulario();

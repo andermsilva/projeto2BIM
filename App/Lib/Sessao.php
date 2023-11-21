@@ -114,7 +114,7 @@ class Sessao{
 
         return isset($_SESSION['carrinho']) ? $_SESSION['carrinho'] : false;
     }
-    public static function retornarPedidos() {
+    public static function retornarListaPedidos() {
 
         return isset($_SESSION['listaPedidos']) ? $_SESSION['listaPedidos'] : false;
     }

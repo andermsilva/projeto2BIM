@@ -1,48 +1,54 @@
 <?php
 namespace App\Controllers;
 
-use App\Lib\Paginacao;
 use App\Lib\Sessao;
 use App\Models\DAO\EnderecoDAO;
 use App\Models\DAO\PagamentoDAO;
 
 use App\Models\Entidades\Endereco;
+use App\Models\Entidades\Pedido;
 use App\Models\Entidades\TipoPagamento;
 
 class PagamentoController extends Controller
 {
     public function index()
     {
-        Sessao::limpaErro();
-        Sessao::limpaMensagem();
-      
-      $tipo = new TipoPagamento();
-      $teste = new PagamentoDAO(); 
-       
-      $ende = new Endereco();
-       
-      $listaEnd = new EnderecoDAO();
-    
-      $vetor = $teste->getAll();
-
-      $vetor1 = $listaEnd->listarPorUsuario($_SESSION['iduser']);
-    
-      self::setViewParam('result', $vetor1);
-
-      self::setViewParam("tipos",$vetor['resultado'] );
-                   
+      if (!$this->auth()) $this->redirect('/login');
+                      
       $this->render("pagamento/index");
 
     }
 
-public function verificar(){
+public function finalizar(){
 
-   // $pedido = new P();
-    $this->render("pagamento/verificar");
+  $aux = [];
+  foreach($_SESSION['pedido'] as $key => $value){
+      $aux[$key] = $value;
+   }
+    //buscar numero do pedido;
+    $tp = new TipoPagamento();
+    $tp->setCod($aux['tpPgto']);
+    $pedido = new Pedido();
+    $pedido->setValor($aux['valor']);
 
+   
+     /* foreach($_SESSION['listaPedidos'] as $item){
+
+       echo '<br> <hr>';
+       foreach($item as $value){
+           echo $value." | ";
+       }
+     }
+  */
+   
+  
+  
+
+
+
+      
     
-    
-    exit;
+  
 }
    
 
