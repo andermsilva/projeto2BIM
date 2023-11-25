@@ -24,6 +24,8 @@ class Sessao{
     }
 
     public static function gravaMensagem($mensagem){
+
+      //  echo "see".$mensagem;exit;
         $_SESSION['mensagem'] = $mensagem;
     }
 

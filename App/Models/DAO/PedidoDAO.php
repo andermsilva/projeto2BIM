@@ -6,6 +6,7 @@ use App\Models\DAO\BaseDAO;
 use App\Models\DAO\ProdutoPedidoDAO;
 use App\Models\DAO\PagamentoDAO;
 use App\Models\Entidades\Pedido;
+use App\Models\Entidades\Produto;
 use App\Models\Entidades\ProdutoPedido;
 use APP\Models\Entidades\TipoPagamento;
 
@@ -85,7 +86,7 @@ class PedidoDAO extends BaseDAO
    {
 
       try {
-         
+
          $pgto = $pedido->getTipoPagamento()->getCod();
          $cliId = $pedido->getUsuario()->getId();
          $valor = $pedido->getValor();
@@ -104,11 +105,11 @@ class PedidoDAO extends BaseDAO
             ]
          );
       } catch (\Exception $e) {
-         
+
          /* echo 'aqui5';
          echo '<hr>';
          var_dump($e->getMessage()); */
-         
+
          //exit;
          throw new \Exception("Erro na gravação de dados." . $e->getMessage(), 500);
       }
@@ -117,18 +118,18 @@ class PedidoDAO extends BaseDAO
 
    }
 
-   
+
    public function salvarLista(ProdutoPedido $pedido)
    {
-      
+
       try {
-           
+
          $pcod = $pedido->getProduto()->getCodigo();
          $ppedNum = $pedido->getPedido()->getPed_num();
          $qtd = $pedido->getQtde();
-         $total = $pedido->getSutotal(); 
+         $total = $pedido->getSutotal();
          $preco = $pedido->getValorUnitario();
-        
+
 
          return $this->insert(
             'produto_has_pedido',
@@ -136,9 +137,9 @@ class PedidoDAO extends BaseDAO
             [
                ':produto_codigo' => $pcod,
                ':pedido_ped_num' => $ppedNum,
-               ':qtde'=> $qtd,
-               ':valorUnitario'=> $preco,
-               ':subtotal'=> $total
+               ':qtde' => $qtd,
+               ':valorUnitario' => $preco,
+               ':subtotal' => $total
 
             ]
          );
@@ -152,7 +153,7 @@ class PedidoDAO extends BaseDAO
    }
 
 
-   public function getAll()
+   public function getAllTpgto()
    {
       $resultado = $this->select(
          "SELECT cod, nome FROM tipo_pagamento ORDER BY cod;"
@@ -184,8 +185,83 @@ class PedidoDAO extends BaseDAO
 
          'resultado' => $listaTipos
       ];
+   }
+
+   public function getById($id)
+   {
+
+      $resultado = $this->select("SELECT pr.imageurl as imagem, pr.codigo as cod, pr.nome,
+            pr.peso, pd.qtde as qtd,pd.valorUnitario as preco,pd.subtotal as valor
+            FROM pedido p inner join usuario u on p.cliente_id = u.id
+            inner join produto_has_pedido pd on pd.pedido_ped_num = p.ped_num
+            inner join produto pr on pr.codigo = pd.produto_codigo
+      WHERE p.ped_num = $id; ");
+
+      $dataSetPedidos = $resultado->fetchAll();
+
+
+      $listaPedidos = [];
+
+      if ($dataSetPedidos) {
+
+         foreach ($dataSetPedidos as $dataSetPedido) {
+            $aux =[];   
+            $pedProd = new ProdutoPedido();
+            $produto = new Produto();
+            $pedido = new Pedido();
+            
+            $produto->setNome($dataSetPedido['nome']);
+            $aux ['nome'] = $produto->getNome();   
+            
+            $produto->setCodigo($dataSetPedido['cod']);
+            $aux ['cod'] = $produto->getCodigo();   
+
+            $produto->setImageUrl($dataSetPedido['imagem']);
+            $aux ['imagem'] = $produto->getImageUrl();  
+
+            $produto->setPeso($dataSetPedido['peso']);
+            $aux ['peso'] = $produto->getImageUrl();   
+            
+            $pedProd->setValorUnitario($dataSetPedido['preco']);
+            $aux ['preco'] = $pedProd->getValorUnitario(); 
+
+            $pedProd->setQtde($dataSetPedido['qtd']);
+            $aux ['qtd'] = $pedProd->getQtde();  
+
+            $pedProd->setSutotal($dataSetPedido['valor']);
+            $aux ['valor'] = $pedProd->getSutotal();  
+
+           
+            $listaPedidos[] = $aux;
+         }
+
+      }
+
+      return [
+
+         'resultado' => $listaPedidos
+      ];
 
 
    }
+
+
+   public function pedidosNoPagos($id){
+
+      $resultado = $this->select("SELECT count(*) as pendencias FROM pedido p
+      inner join status_pedido s on s.status_id = p.status
+      where p.cliente_id = $id and p.status = 2 ;"
+    );
+
+   $pendencias = $resultado->fetch()['pendencias'];
+
+ 
+   return [
+      'pendencias' => $pendencias
+      
+   ];
+
+   }
+
 }
 ?>

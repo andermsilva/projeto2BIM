@@ -3,7 +3,13 @@
 
     <div class="d-flex justify-content-end">
 
-        <form action="http://<?php echo APP_HOST; ?>/produto/" method="get" class="form-inline">
+        <form action="http://<?php
+
+use App\Lib\Sessao;
+
+ echo APP_HOST; ?>/produto/" method="get" class="form-inline">
+            
+               
             <div class="input-group mb-3" style="width:300px;">
 
                 <input class="form-control" type="text" name="busca" placeholder="" aria-label="Recipient's username">
@@ -63,7 +69,7 @@
                             <input type="hidden" name="preco" value="<?php //echo $produto->getPreco()?>">
 
 
-                            <a href="">Finalizar</a>/ 
+                            <a href="http://<?php echo APP_HOST ?>/pedido/verificar/<?php echo $pedido->getPed_num()?>" >Pagar</a> -  
                             <a href="">Cancelar</a>
                            
                         </form>

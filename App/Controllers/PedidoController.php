@@ -20,7 +20,7 @@ class PedidoController extends Controller
     public function index()
     {
 
-
+          
         if (!$this->auth())
             $this->redirect('/login');
 
@@ -123,24 +123,54 @@ class PedidoController extends Controller
         $this->redirect('/home');
     }
 
-    public function verificar()
+    public function verificar($params)
     {
+        $num_ped="";
+        if($params){
+
+            $num_ped = $params[0];
+        }
+
+        $id = $_SESSION['iduser'];
 
         if (!$this->auth())
             $this->redirect('/login');
+
+        
+
         Sessao::limpaErro();
         Sessao::limpaMensagem();
 
         $listaEnd = new EnderecoDAO();
         $ende = new Endereco();
-        $vetor1 = $listaEnd->listarPorUsuario($_SESSION['iduser']);
+        $vetor1 = $listaEnd->listarPorUsuario($id);
         self::setViewParam('result', $vetor1);
 
         $pgt = new TipoPagamento();
-        $teste = new pedidoDAO();
-        $vetor = $teste->getAll();
+        $pedidoDAO = new pedidoDAO();
+
+       $pendencias = $pedidoDAO->pedidosNoPagos($id);
+
+       if($pendencias['pendencias'] > 0){
+            Sessao::gravaMensagem("Não foi possivél finalizar seu pedido!");
+
+            $this->redirect('/pedido');
+       }
+
+        if ($num_ped) {
+            $listaPedido = $pedidoDAO->getById($num_ped);
+
+       
+
+            self::setViewParam("listaPedidos",$listaPedido["resultado"]);
+        }
+
+      
+        $vetor = $pedidoDAO->getAllTpgto();
 
         self::setViewParam("tipos", $vetor['resultado']);
+
+
 
         $this->render('pedido/verificar');
 
@@ -176,26 +206,26 @@ class PedidoController extends Controller
         $pedido->getUsuario()->setId($aux['idCli']);
         $pedido->setValor($aux['valor']);
         $pedido->getEndereco()->setEndCod($aux['ender']);
-       
+
         try {
-            
+
             $pedidoDAO = new PedidoDAO();
 
             $numPed = $pedidoDAO->salvar($pedido);
-            
+
             $pedido->setPed_num($numPed);
-           
+
             echo 'aqui5';
             echo '<hr>';
-           
-         
+
+
             foreach ($_SESSION['listaPedidos'] as $key => $item) {
 
                 foreach ($item as $k => $valor) {
-                    
+
                     $vetPedido[$k] = $valor;
                 }
-              
+
 
                 $prodPed = new ProdutoPedido();
 
@@ -204,19 +234,19 @@ class PedidoController extends Controller
                 $prodPed->setValorUnitario($vetPedido['preco']);
                 $prodPed->setQtde($vetPedido['qtd']);
                 $prodPed->setSutotal($vetPedido['valor']);
-                
+
                 $pedidoDAO->salvarLista($prodPed);
             }
-            
+
 
         } catch (\Exception $e) {
 
-            Sessao::gravaErro($e->getMessage()) ;
+            Sessao::gravaErro($e->getMessage());
             $this->redirect('/pedido/verificar');
 
         }
 
-        
+
 
         $this->redirect('/pagamento');
 

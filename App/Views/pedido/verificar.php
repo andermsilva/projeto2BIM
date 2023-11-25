@@ -1,6 +1,3 @@
-<h1>Finalizar</h1>
-
-
 <section class="container_card ">
     <form method="post" action="http://<?php echo APP_HOST ?>/pedido/salvarPedido" style="width: 80%;" class="text-center mx-auto">
         <div class="text">
@@ -59,10 +56,21 @@
 
 
                 $somaTotal = 0;
-                $i = 0;
-                $vetor = $_SESSION['carrinho'];
+              /*   $i = 0;
+                $vetor = $_SESSION['carrinho']; */
 
-                foreach ($_SESSION['listaPedidos'] as $produto) {
+           //    var_dump($$viewVar['listaPedidos']);exit;
+                
+                $arr_produtos = array();    
+                
+                if(!isset($_SESSION['listaPedidos'])){
+                   $arr_produtos = $viewVar['listaPedidos'];
+                  // echo "aqui"; exit;
+                }else{
+                    $arr_produtos = $_SESSION['listaPedidos'];
+                }
+
+                foreach ($arr_produtos as $produto) {
 
 
                     if ($produto != null) { ?>

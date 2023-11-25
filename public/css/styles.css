@@ -18,9 +18,15 @@ main {
 }
 
 .cor-bg-ft-mn{
-  background-color: #ed8b00; 
+  background-color: #f40909; /*alterei*/
 
 }
+
+.navbar-nav .nav-link {
+  color: #eadfdf !important; /* adicionei*/
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
 .qtd-car{
   font-size: 0.75rem;
 }
@@ -75,3 +81,18 @@ main {
 .corfundo2{
  /*  background-color: #c51717; */
 }
+/*adicionei*/
+.carousel {
+  max-width: 100%; 
+  margin: auto;
+  overflow: hidden; 
+}
+.carousel-inner .carousel-item img {
+  height: auto; 
+  max-height: 500px; 
+  width: 100%; 
+}
+body{
+  background-color: rgb(245, 206, 157); /*adicionei cor fundo das paginas*/
+}
+

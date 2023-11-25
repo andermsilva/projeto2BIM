@@ -17,10 +17,11 @@
     <hr>
 
     <div class="d-flex justify-content-between">
-
+  
         <a class="" href="http://<?php echo APP_HOST ?>/pedido/esvaziar">
             <button type="button" class="btn btn-secondary">Esvaziar</button>
         </a>
+       
         <a class="" href="http://<?php echo APP_HOST ?>/pedido/verificar">
             <button type="button" class="btn btn-success">Finalizar Comprar</button>
         </a>
@@ -45,6 +46,7 @@
 
             <?php
             //var_dump($_SESSION["endereco"]);
+            if(isset($_SESSION['listaPedidos'])){
 
             for ($i = 0; $i < count($_SESSION['listaPedidos']); $i++) {
                 $pedido = $_SESSION['listaPedidos'][$i];
@@ -110,7 +112,11 @@
 
 
 
-            <?php } ?>
+            <?php } } else{?>
+                    <tr>
+                        <td class="text-center" colspan="6"><h4>Carrinho vazio</h4></td>
+                    </tr>
+                <?php }?>
         </tbody>
     </table>
 
