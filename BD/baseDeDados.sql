@@ -63,7 +63,7 @@ CREATE TABLE `endereco` (
   PRIMARY KEY (`end_cod`),
   KEY `fk_endereco_cliente1_idx` (`cliente_cli_id`),
   CONSTRAINT `fk_endereco_cliente1` FOREIGN KEY (`cliente_cli_id`) REFERENCES `usuario` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,7 +72,7 @@ CREATE TABLE `endereco` (
 
 LOCK TABLES `endereco` WRITE;
 /*!40000 ALTER TABLE `endereco` DISABLE KEYS */;
-INSERT INTO `endereco` VALUES (39,1,'1956265','AAAA','23','A','Jd','Pres.Prudente'),(40,1,'19045802','Diamante','500','Ap21','Jd Botanico','São Paulo');
+INSERT INTO `endereco` VALUES (39,1,'1956265','Avenida Corenel Jose Soares Marconde','23','A','Jd','Pres.Prudente'),(40,1,'19045802','Diamante','500','Ap21','Jd Botanico','São Paulo'),(41,3,'19045802','Diamante','500','Ap21','Jd Botanico','São Paulo');
 /*!40000 ALTER TABLE `endereco` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -113,14 +113,14 @@ DROP TABLE IF EXISTS `pagamento`;
 CREATE TABLE `pagamento` (
   `pag_id` int NOT NULL AUTO_INCREMENT,
   `data_pgto` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `identificador` varchar(200) NOT NULL,
+  `tp_pgto_cod` int NOT NULL,
   `valor` decimal(12,2) NOT NULL,
   `ped_num` int NOT NULL,
   `cancelado` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`pag_id`),
-  KEY `pedido_pagamento` (`ped_num`),
-  CONSTRAINT `pedido_pagamento` FOREIGN KEY (`ped_num`) REFERENCES `pedido` (`ped_num`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb3;
+  KEY `pedido_pagamento_idx` (`tp_pgto_cod`),
+  CONSTRAINT `tp_pgto_pagamento` FOREIGN KEY (`tp_pgto_cod`) REFERENCES `tipo_pagamento` (`cod`)
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -129,6 +129,7 @@ CREATE TABLE `pagamento` (
 
 LOCK TABLES `pagamento` WRITE;
 /*!40000 ALTER TABLE `pagamento` DISABLE KEYS */;
+INSERT INTO `pagamento` VALUES (37,'2023-11-25 16:08:27',3,60.40,144,0);
 /*!40000 ALTER TABLE `pagamento` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -155,7 +156,7 @@ CREATE TABLE `pedido` (
   CONSTRAINT `fk_pedido_cliente1` FOREIGN KEY (`cliente_id`) REFERENCES `usuario` (`id`),
   CONSTRAINT `fk_pedido_tipo_pagamento1` FOREIGN KEY (`tipo_pgto_cod`) REFERENCES `tipo_pagamento` (`cod`),
   CONSTRAINT `status_ped_pedido` FOREIGN KEY (`status`) REFERENCES `status_pedido` (`status_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -164,7 +165,7 @@ CREATE TABLE `pedido` (
 
 LOCK TABLES `pedido` WRITE;
 /*!40000 ALTER TABLE `pedido` DISABLE KEYS */;
-INSERT INTO `pedido` VALUES (1,3,1,'2023-11-18 10:12:21',20.00,2,1),(2,9,1,'2023-11-18 10:12:29',35.00,2,3),(3,3,1,'2023-11-18 10:12:34',150.00,2,1);
+INSERT INTO `pedido` VALUES (142,9,1,'2023-11-22 21:01:29',38.40,40,1),(143,9,1,'2023-11-25 13:34:18',60.40,40,1),(144,3,1,'2023-11-25 15:29:55',60.40,39,1),(145,3,3,'2023-11-25 22:40:50',43.50,41,2);
 /*!40000 ALTER TABLE `pedido` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -217,7 +218,7 @@ CREATE TABLE `produto_has_pedido` (
   PRIMARY KEY (`produto_codigo`,`pedido_ped_num`),
   KEY `fk_produto_has_pedido_pedido1_idx` (`pedido_ped_num`),
   KEY `fk_produto_has_pedido_produto1_idx` (`produto_codigo`),
-  CONSTRAINT `fk_produto_has_pedido_pedido1` FOREIGN KEY (`pedido_ped_num`) REFERENCES `pedido` (`ped_num`),
+  CONSTRAINT `fk_produto_has_pedido_pedido1` FOREIGN KEY (`pedido_ped_num`) REFERENCES `pedido` (`ped_num`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_produto_has_pedido_produto1` FOREIGN KEY (`produto_codigo`) REFERENCES `produto` (`codigo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -228,7 +229,7 @@ CREATE TABLE `produto_has_pedido` (
 
 LOCK TABLES `produto_has_pedido` WRITE;
 /*!40000 ALTER TABLE `produto_has_pedido` DISABLE KEYS */;
-INSERT INTO `produto_has_pedido` VALUES (7,1,2,3.50,0.00,3.50),(9,1,1,14.90,1.50,13.40),(10,3,1,5.90,0.50,5.40),(12,2,3,55.00,0.00,55.00),(13,3,2,25.90,0.00,25.90);
+INSERT INTO `produto_has_pedido` VALUES (6,143,1,22.00,NULL,22.00),(6,144,1,22.00,NULL,22.00),(7,142,1,19.90,NULL,19.90),(7,143,1,19.90,NULL,19.90),(7,144,1,19.90,NULL,19.90),(9,142,1,18.50,NULL,18.50),(9,143,1,18.50,NULL,18.50),(9,144,1,18.50,NULL,18.50),(9,145,1,18.50,NULL,18.50),(10,145,1,25.00,NULL,25.00);
 /*!40000 ALTER TABLE `produto_has_pedido` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -355,7 +356,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Anderson Marques da Silva','M','2023-06-09','adimin','$2y$10$etSIWhDPI3lJYPEGwvq9xO2xo1HV.Q.4NswFO2AuZ0EI4eGT4wR9i','18997752582','andermarsil@gmail.com','11111111100');
+INSERT INTO `usuario` VALUES (1,'Anderson Marques da Silva','M','2023-06-09','user','$2y$10$etSIWhDPI3lJYPEGwvq9xO2xo1HV.Q.4NswFO2AuZ0EI4eGT4wR9i','18997752582','andermarsil@gmail.com','11111111100'),(2,'Administrador','M','2023-06-09','admin','$2y$10$etSIWhDPI3lJYPEGwvq9xO2xo1HV.Q.4NswFO2AuZ0EI4eGT4wR9i','18997752582','admin@gmail.com','11111111100'),(3,'TESTE','M','2023-06-09','user','$2y$10$etSIWhDPI3lJYPEGwvq9xO2xo1HV.Q.4NswFO2AuZ0EI4eGT4wR9i','18997752582','teste@gmail.com','11111111101');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -368,4 +369,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-19 23:47:35
+-- Dump completed on 2023-11-25 23:20:47

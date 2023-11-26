@@ -154,32 +154,8 @@ if (isset($_SESSION['mensagem'])) {
                     </td>
                     <td>
 
-                        <form method="post" action="http://<?php echo APP_HOST ?>/pedido/carrinho" class="d-flex">
 
-                            <input type="hidden" name="cod" value="<?php //echo $produto->getCodigo()?>">
-
-
-                            <input type="hidden" name="preco" value="<?php //echo $produto->getPreco()?>">
-
-                            <?php
-                            if ($pedido->getStatus()->getStatusId() == 2) {
-                                ?>
-                                <a
-                                    href="http://<?php echo APP_HOST ?>/pagamento/pagar/<?php echo $pedido->getPed_num() ?>">Pagar</a>
-                              &nbsp;  &nbsp;  &nbsp;
-
-                                <a href="http://<?php echo APP_HOST ?>/pedido/cancelar/<?php echo $pedido->getPed_num() ?>">Cancelar</a>
-                            <?php } ?>
-                            <?php
-                            if ($pedido->getStatus()->getStatusId() == 1) {
-                                ?>
-                                <a href="http://<?php echo APP_HOST ?>/pedido/finalizado/<?php echo $pedido->getPed_num() ?>">Finalizado</a>
-                            <?php } if($pedido->getStatus()->getStatusId() == 3) { ?>
-
-                                <a href="">Cancelado</a>
-
-                            <?php } ?>
-                        </form>
+                       
                     </td>
                 </tr>
 
