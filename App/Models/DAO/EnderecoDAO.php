@@ -113,7 +113,12 @@ class EnderecoDAO extends BaseDAO
         }
 
 
-
+        public function getById( $id) {
+            $resulatado = $this->select("SELECT * FROM endereco WHERE end_cod = $id;");
+    
+            return $resulatado->fetchObject(Endereco::class);
+    
+         }
 
 
 

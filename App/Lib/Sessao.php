@@ -21,11 +21,13 @@ class Sessao{
         $_SESSION['tipo'] = false;
         unset($_SESSION['iduser']);
         unset($_SESSION['username']);       
+        unset($_SESSION['listaPedidos']);       
+        unset($_SESSION['carrinho']);       
     }
 
     public static function gravaMensagem($mensagem){
 
-      //  echo "see".$mensagem;exit;
+       // echo "see".$mensagem;exit;
         $_SESSION['mensagem'] = $mensagem;
     }
 
@@ -34,6 +36,7 @@ class Sessao{
     }
 
     public static function retornaMensagem(){
+       
         return (isset($_SESSION['mensagem'])) ? $_SESSION['mensagem'] : "";
     }
 

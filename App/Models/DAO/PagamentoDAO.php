@@ -73,6 +73,12 @@ class PagamentoDAO extends BaseDAO
 
 
     }
+    public function getById( $id) {
+        $resulatado = $this->select("SELECT * FROM tipo_pagamento WHERE cod = $id;");
+
+        return $resulatado->fetchObject(TipoPagamento::class);
+
+     }
 
 
 

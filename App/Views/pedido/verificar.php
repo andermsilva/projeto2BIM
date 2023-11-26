@@ -59,16 +59,20 @@
               /*   $i = 0;
                 $vetor = $_SESSION['carrinho']; */
 
-           //    var_dump($$viewVar['listaPedidos']);exit;
-                
-                $arr_produtos = array();    
-                
-                if(!isset($_SESSION['listaPedidos'])){
-                   $arr_produtos = $viewVar['listaPedidos'];
-                  // echo "aqui"; exit;
+             /*  var_dump($_SESSION['listaPedidos']);
+              echo "<hr>"; */
+              $arr_produtos = array();    
+              
+              if(isset($_SESSION['listaPedidos']) && count($_SESSION['listaPedidos'])>0){
+                        
+                  $arr_produtos = $_SESSION['listaPedidos'];
+               
                 }else{
-                    $arr_produtos = $_SESSION['listaPedidos'];
+
+                   // echo "aqui2"; exit;
+                    $arr_produtos = $_viewVar['listaPedidos'];
                 }
+                //var_dump($arr_produtos);exit;
 
                 foreach ($arr_produtos as $produto) {
 

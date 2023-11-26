@@ -33,10 +33,10 @@
           if (isset($_SESSION['loggedin']) && isset($_SESSION['username']) && $_SESSION['tipo']=='admin') { ?>
 
             <li class="nav-item">
-              <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/produto">Gerenciar Produto</a>
+              <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/tipopagamento">Tipo Pagamento</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/tipoproduto">Tipo </a>
+              <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/tipoproduto">Tipo Produto </a>
             </li>
 
           <?php } ?>

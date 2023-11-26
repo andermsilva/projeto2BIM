@@ -17,9 +17,21 @@
                 <?php
                 $somaTotal = 0;
                 $i = 0;
-                $carrinho = $_SESSION['carrinho'];
+               // $carrinho = $_SESSION['carrinho'];
 
-                foreach ($_SESSION['listaPedidos'] as $chave => $produto) { ?>
+               $arr_produtos = array();    
+              
+              // var_dump($viewVar['listaPedidos']);
+
+               if(isset($viewVar['listaPedidos'])){
+                         
+                   $arr_produtos = $viewVar['listaPedidos'];
+                
+                }
+                 //var_dump($arr_produtos);exit;
+
+
+                foreach ($arr_produtos as $chave => $produto) { ?>
 
                     <tr>
 
@@ -31,22 +43,26 @@
                         </td>
                         <td class="text-center">R$
 
-                            <?php echo number_format($carrinho[$i]['preco'], 2, ',', '.') ?>
+                            <?php echo number_format($produto['preco'], 2, ',', '.') ?>
                         </td>
-                        <td class="text-center"> R$ <?php echo  number_format($carrinho[$i]['preco'] * $produto['qtd'], 2, ',', '.') ?></td>
+                        <td class="text-center"> R$ <?php echo  number_format($produto['preco'] * $produto['qtd'], 2, ',', '.') ?></td>
 
 
 
                     </tr>
 
                     <?php
-                    echo $somaTotal += $carrinho[$i]['preco'] * $produto['qtd'];
+                    echo $somaTotal += $produto['preco'] * $produto['qtd'];
                 $i ++; } ?>
                 <tr>
                     <th colspan="2"></th>
                     <th class="text-center">Total</th>
                     <th class="text-center">R$ <?php echo number_format($somaTotal, 2, ',', '.') ?></th>
-
+                    <input type="hidden" name="valor_total" value="<?php echo $somaTotal ?>">
+                   
+                  
+                    <input type="hidden" name="ped_num" value="<?php echo $produto['ped_num']?>" >
+                    
 
                 <tr>
                     <td style="text-align: end;" class="align-items-center">
@@ -54,7 +70,7 @@
                     </td>
 
                     <td class="text-end" colspan="2">
-                        <input type="text" value="PIX 8989434jajfsa00" class="input-group-text"
+                        <input type="text" value="<?php echo $produto['pgto_cod'] ?>" class="input-group-text"
                             style="height: 40px; width: 400px;margin-left: auto;" name="identificador">
 
                     </td>
@@ -69,8 +85,7 @@
                     </td>
 
                 </tr>
-                <input type="hidden" name="total" value=" $somaTotal ?>">
-                <input type="hidden" name="num" value="< $num ?>">
+               
             </form>
         </tbody>
     </table>

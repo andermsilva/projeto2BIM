@@ -6,7 +6,7 @@ class Usuario{
 
     private int $id;
     private string $nome;
-    private string $smail;
+    private string $email;
     private string $senha;
     private string $tipo;
 
@@ -39,15 +39,15 @@ class Usuario{
     }
 
    
-    public function getSmail()
+    public function getEmail()
     {
-        return $this->smail;
+        return $this->email;
     }
 
    
-    public function setSmail($smail)
+    public function setEmail($email)
     {
-        $this->smail = $smail;
+        $this->email = $email;
 
         return $this;
     }

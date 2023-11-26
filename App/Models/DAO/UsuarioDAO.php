@@ -5,9 +5,9 @@
   class UsuarioDAO extends BaseDAO {
 
      public function getById( $id) {
-        $resulatad = $this->select("SELECT * FROM usuario WHERE id = $id;");
+        $resulatado = $this->select("SELECT * FROM usuario WHERE id = $id;");
 
-        return $resulatad->fetchObject(Usuario::class);
+        return $resulatado->fetchObject(Usuario::class);
 
      }
 

@@ -4,7 +4,7 @@ namespace App\Controllers;
 use App\Lib\Paginacao;
 use App\Lib\Sessao;
 use App\Models\DAO\EnderecoDAO;
-
+use App\Models\DAO\PagamentoDAO;
 use App\Models\DAO\PedidoDAO;
 use App\Models\DAO\ProdutoDAO;
 
@@ -20,22 +20,25 @@ class PedidoController extends Controller
     public function index()
     {
 
-          
+
         if (!$this->auth())
             $this->redirect('/login');
-
-        Sessao::limpaErro();
-        Sessao::limpaMensagem();
+ 
+        
+        /* Sessao::limpaErro();
+        Sessao::limpaMensagem(); */
 
         $pedidoDAO = new PedidoDAO();
 
         $busca = isset($_GET['busca']) ? $_GET['busca'] : null;
         $paginaSelecionada = isset($_GET['paginaSelecionada']) ? $_GET['paginaSelecionada'] : 1;
         $totalPorPagina = 5;
-
+        
         $listPedidos = $pedidoDAO->listaPaginacao($busca, $totalPorPagina, $paginaSelecionada);
-        $paginacao = new Paginacao($listPedidos);
 
+          
+        $paginacao = new Paginacao($listPedidos);
+        
         self::setViewParam('busca', $busca);
         self::setViewParam('paginacao', $paginacao->criandoLink($busca, "pedido"));
         self::setViewParam("queryString", Paginacao::criandoQuerystring($paginaSelecionada, $busca));
@@ -52,7 +55,8 @@ class PedidoController extends Controller
     public function carrinho()
     {
         $car = [];
-        $car['cod'] = $_POST['cod'];
+        +
+            $car['cod'] = $_POST['cod'];
         $car['qtd'] = $_POST['qtd'];
         $car['preco'] = $_POST['preco'];
 
@@ -120,13 +124,15 @@ class PedidoController extends Controller
     {
         Sessao::limparCarrinho();
         Sessao::limparListaPedidos();
+        Sessao::limpaMensagem();
+        Sessao::limpaErro();
         $this->redirect('/home');
     }
 
     public function verificar($params)
     {
-        $num_ped="";
-        if($params){
+        $num_ped = 0;
+        if ($params) {
 
             $num_ped = $params[0];
         }
@@ -136,36 +142,37 @@ class PedidoController extends Controller
         if (!$this->auth())
             $this->redirect('/login');
 
-        
-
         Sessao::limpaErro();
         Sessao::limpaMensagem();
-
-        $listaEnd = new EnderecoDAO();
-        $ende = new Endereco();
-        $vetor1 = $listaEnd->listarPorUsuario($id);
-        self::setViewParam('result', $vetor1);
 
         $pgt = new TipoPagamento();
         $pedidoDAO = new pedidoDAO();
 
-       $pendencias = $pedidoDAO->pedidosNoPagos($id);
+        $pendencias = $pedidoDAO->pedidosNoPagos($id);
 
-       if($pendencias['pendencias'] > 0){
+        if ($pendencias['pendencias'] > 0 && isset($_SESSION['carrinho']) && $num_ped == 0) {
+            Sessao::limparListaPedidos();
+            Sessao::limparCarrinho();
+            // echo $num_ped ."<br>";
             Sessao::gravaMensagem("Não foi possivél finalizar seu pedido!");
+            //  echo"aqui".$pendencias['pendencias'];exit;
+            $this->redirect('/pedido/index');
+        }
 
-            $this->redirect('/pedido');
-       }
+        $listaEnd = new EnderecoDAO();
+        // $ende = new Endereco();
+
+
+        $vetor1 = $listaEnd->listarPorUsuario($id);
+        self::setViewParam('result', $vetor1);
 
         if ($num_ped) {
             $listaPedido = $pedidoDAO->getById($num_ped);
-
-       
-
-            self::setViewParam("listaPedidos",$listaPedido["resultado"]);
+            //var_dump($listaPedido["resultado"]);exit;
+            self::setViewParam("listaPedidos", $listaPedido["resultado"]);
         }
 
-      
+
         $vetor = $pedidoDAO->getAllTpgto();
 
         self::setViewParam("tipos", $vetor['resultado']);
@@ -215,8 +222,8 @@ class PedidoController extends Controller
 
             $pedido->setPed_num($numPed);
 
-            echo 'aqui5';
-            echo '<hr>';
+            /* echo 'aqui5';
+            echo '<hr>'; */
 
 
             foreach ($_SESSION['listaPedidos'] as $key => $item) {
@@ -245,11 +252,24 @@ class PedidoController extends Controller
             $this->redirect('/pedido/verificar');
 
         }
-
-
-
         $this->redirect('/pagamento');
+    }
 
+    public function cancelar($params)
+    {
+
+        $ped_num = $params[0];
+
+        $pedidoDAO = new PedidoDAO();
+
+        if(!$pedidoDAO->excluir($ped_num)){
+
+            Sessao::gravaMensagem("Pedido '{$ped_num}' inexixtente ou ja foi cancelado!");
+        }
+
+        Sessao::gravaMensagem("Pedido '{$ped_num}' excluido com sucesso!");
+
+        $this->redirect('/pedido');
 
 
 
@@ -257,10 +277,44 @@ class PedidoController extends Controller
     }
 
 
+public function finalizado($params){
 
+  $ped_num = $params[0];
+  $pedidoDAO = new PedidoDAO();
+  $pedidoFinalizado = $pedidoDAO->getById($ped_num);
+  $end_cod=0;
+  $pgCod =0;
+  $enderecoDAO = new EnderecoDAO();
+  $localEntrega = new Endereco();
+  $pagamentoDAO = new PagamentoDAO();
+  $formaPG = new TipoPagamento();
+ 
+  foreach(  $pedidoFinalizado['resultado'] as $p){
 
+    foreach($p as $key => $value){
 
+        if($key == 'end_cod'){
+            $end_cod = $value;
+        }
 
+        if($key == 'pgto_cod'){
+            $pgCod = $value;
+        }
+    }
+  }  
+  
+  $localEntrega = $enderecoDAO->getById($end_cod);
+  $formaPG = $pagamentoDAO->getById($pgCod);
+ /*  var_dump($localEntrega->getLogradouro());
+   exit; */
+   self::setViewParam('local',$localEntrega);
+   self::setViewParam('pagamento',$formaPG);
+
+   self::setViewParam("pedido",$pedidoFinalizado['resultado']);
+
+   $this->render('pedido/finalizado');
+}
 
 }
+
 ?>

@@ -25,7 +25,7 @@ abstract class BaseDAO
 
         if (!empty($sql)) {
 
-            // var_dump($sql);exit;
+           // var_dump($sql);exit;
             return $this->conexao->query($sql);
         }
     }
@@ -40,10 +40,10 @@ abstract class BaseDAO
             $colunas = str_replace(":", "", $cols);
             $stmt = $this->conexao->prepare("insert into $table($colunas) values($parametros)");
 
-            
+
             $stmt->bindParam($parametros, $colunas);
-            
-          
+
+
 
             $stmt->execute($values);
 
@@ -63,12 +63,12 @@ abstract class BaseDAO
                 " $where = WHERE $where ";
 
             $stmt = $this->conexao->prepare("update $table set $cols Where $where");
-        /*      var_dump($table);
-             var_dump($cols);
-             var_dump($values);
-             
-             var_dump($stmt);exit; */
-             $stmt->execute($values);
+            /*      var_dump($table);
+                 var_dump($cols);
+                 var_dump($values);
+                 
+                 var_dump($stmt);exit; */
+            $stmt->execute($values);
 
             return $stmt->rowCount();
         } else {
@@ -78,20 +78,19 @@ abstract class BaseDAO
 
     }
 
-    public function delete($table, $where = null)
+    public function delete( $table, $where = null)
     {
-
-        if (!empty($table)) {
+            if (!empty($table)) {
 
             if ($where) {
                 $where = " where $where ";
             }
 
+         
             $stmt = $this->conexao->prepare("delete from $table $where");
-           
             $stmt->execute();
             $stmt->rowCount();
-        }else{
+        } else {
             return false;
         }
     }

@@ -19,22 +19,30 @@ class PedidoDAO extends BaseDAO
       $inicio = (($paginaSelecionada - 1) * $totalPorPagina);
 
       $whereBusca = ($busca) ? "AND (p.ped_data = '$busca' " : '';
+      $idUser ="";
+      $where = "";
+      if($_SESSION['tipo'] == 'user'){
+         $where = " WHERE ";
+         $idUser =  " u.id =  {$_SESSION['iduser']}";
+      }
 
+    /*   var_dump($where);
+      var_dump($idUser);
+      
+      exit;  */
       $resultadoTotal = $this->select(
          "SELECT count(*) as total 
         FROM pedido p inner join usuario u on p.cliente_id = u.id 
-        WHERE u.id = " . $_SESSION['iduser'] . ";"
-      );
+         $where   $idUser;");
 
-
-      $resultado = $this->select("SELECT p.ped_num as pnum, pg.nome as pgto,
-                     p.cliente_id,p.ped_data, p.valor_total, p.end_cod,p.status
+      
+      $resultado = $this->select("SELECT p.ped_num as pnum, pg.nome as pgto,u.nome,u.id,
+                     p.cliente_id,p.ped_data, p.valor_total, p.end_cod, p.status
           FROM pedido p inner join usuario u on p.cliente_id = u.id
           inner join tipo_pagamento pg on pg.cod = tipo_pgto_cod
         
-          WHERE u.id = {$_SESSION['iduser']} LIMIT {$inicio}, {$totalPorPagina};");
+          $where   $idUser LIMIT {$inicio}, {$totalPorPagina};");
       // var_dump($resultado);exit;
-
       $dataSetPedidos = $resultado->fetchAll();
       $totalLinhas = $resultadoTotal->fetch()['total'];
 
@@ -62,7 +70,7 @@ class PedidoDAO extends BaseDAO
             $pedido->getUsuario()->setId($dataSetPedido['cliente_id']);
             $pedido->setData($dataSetPedido['ped_data']);
             $pedido->getEndereco()->setEndCod($dataSetPedido['end_cod']);
-            $pedido->getStatus()->setStatus($dataSetPedido['status']);
+            $pedido->getStatus()->setStatusId($dataSetPedido['status']);
             $pedido->setProdutos($qtde);
             $pedido->setValor($dataSetPedido['valor_total']);
 
@@ -190,49 +198,64 @@ class PedidoDAO extends BaseDAO
    public function getById($id)
    {
 
-      $resultado = $this->select("SELECT pr.imageurl as imagem, pr.codigo as cod, pr.nome,
-            pr.peso, pd.qtde as qtd,pd.valorUnitario as preco,pd.subtotal as valor
+      $resultado = $this->select("SELECT pr.imageurl as imagem, pr.codigo as cod, pr.nome,p.ped_num as num,
+            pr.peso, pd.qtde as qtd,pd.valorUnitario as preco,pd.subtotal as valor,p.ped_data,p.end_cod,p.status,
+            p.tipo_pgto_cod as pgto_cod
             FROM pedido p inner join usuario u on p.cliente_id = u.id
             inner join produto_has_pedido pd on pd.pedido_ped_num = p.ped_num
             inner join produto pr on pr.codigo = pd.produto_codigo
+            
       WHERE p.ped_num = $id; ");
 
       $dataSetPedidos = $resultado->fetchAll();
 
-
-      $listaPedidos = [];
+   
+      $objPedido = [];
 
       if ($dataSetPedidos) {
 
          foreach ($dataSetPedidos as $dataSetPedido) {
-            $aux =[];   
+            $aux = [];
+            $aux2 = [];
             $pedProd = new ProdutoPedido();
             $produto = new Produto();
             $pedido = new Pedido();
-            
+
             $produto->setNome($dataSetPedido['nome']);
-            $aux ['nome'] = $produto->getNome();   
-            
+            $aux['nome'] = $produto->getNome();
+
             $produto->setCodigo($dataSetPedido['cod']);
-            $aux ['cod'] = $produto->getCodigo();   
+            $aux['cod'] = $produto->getCodigo();
 
             $produto->setImageUrl($dataSetPedido['imagem']);
-            $aux ['imagem'] = $produto->getImageUrl();  
+            $aux['imagem'] = $produto->getImageUrl();
 
             $produto->setPeso($dataSetPedido['peso']);
-            $aux ['peso'] = $produto->getImageUrl();   
-            
+            $aux['peso'] = $produto->getImageUrl();
+
             $pedProd->setValorUnitario($dataSetPedido['preco']);
-            $aux ['preco'] = $pedProd->getValorUnitario(); 
+            $aux['preco'] = $pedProd->getValorUnitario();
 
             $pedProd->setQtde($dataSetPedido['qtd']);
-            $aux ['qtd'] = $pedProd->getQtde();  
+            $aux['qtd'] = $pedProd->getQtde();
 
             $pedProd->setSutotal($dataSetPedido['valor']);
-            $aux ['valor'] = $pedProd->getSutotal();  
+            $aux['valor'] = $pedProd->getSutotal();
+            
+            $pedido->setPed_num($dataSetPedido['num']);
+            $aux['ped_num'] = $pedido->getPed_num();
 
-           
+            $pedido->getTipoPagamento()->setCod($dataSetPedido['pgto_cod']);
+            $aux['pgto_cod'] = $pedido->getTipoPagamento()->getCod();
+            
+            $pedido->getEndereco()->setEndCod($dataSetPedido['end_cod']);
+            $aux['end_cod'] = $pedido->getEndereco()->getEndCod();
+            
+            $pedido->setData($dataSetPedido['ped_data']);
+            $aux['ped_data'] = $pedido->getData();
+
             $listaPedidos[] = $aux;
+          
          }
 
       }
@@ -240,27 +263,43 @@ class PedidoDAO extends BaseDAO
       return [
 
          'resultado' => $listaPedidos
+        
       ];
 
 
    }
 
+   public function pedidosNoPagos($id)
+   {
 
-   public function pedidosNoPagos($id){
-
-      $resultado = $this->select("SELECT count(*) as pendencias FROM pedido p
+      $resultado = $this->select(
+         "SELECT count(*) as pendencias FROM pedido p
       inner join status_pedido s on s.status_id = p.status
       where p.cliente_id = $id and p.status = 2 ;"
-    );
+      );
 
-   $pendencias = $resultado->fetch()['pendencias'];
+      $pendencias = $resultado->fetch()['pendencias'];
 
- 
-   return [
-      'pendencias' => $pendencias
-      
-   ];
 
+      return [
+         'pendencias' => $pendencias
+
+      ];
+
+   }
+
+   public function excluir($pedido)
+   {
+      $ped_num = $pedido;
+
+      try {
+
+         return $this->delete("pedido", "ped_num = $ped_num");
+
+      } catch (\Exception $e) {
+        
+         throw new \Exception("Erro ao deletar" . $e->getMessage(), 500);
+      }
    }
 
 }
