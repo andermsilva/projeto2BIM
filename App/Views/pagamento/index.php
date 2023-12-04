@@ -21,7 +21,7 @@
 
                $arr_produtos = array();    
               
-              // var_dump($viewVar['listaPedidos']);
+               //var_dump($viewVar['listaPedidos']);
 
                if(isset($viewVar['listaPedidos'])){
                          
@@ -62,7 +62,7 @@
                    
                   
                     <input type="hidden" name="ped_num" value="<?php echo $produto['ped_num']?>" >
-                    
+                </tr>    
 
                 <tr>
                     <td style="text-align: end;" class="align-items-center">

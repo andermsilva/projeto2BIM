@@ -12,29 +12,29 @@
             <select class="form-select form-select-sm" name="endereco">
 
                 <!--  <option>Selecione um endereço para entrega</option> -->
-
+//
                 <?php
-
+             //   var_dump($viewVar['result']);exit;
                 foreach ($viewVar['result'] as $item) {
-                    for ($i = 0; $i < count($item); $i++) {
+                  //  for ($i = 0; $i < count($item); $i++) {
 
                         ?>
 
-                        <option value="<?php echo $item[$i]->getEndCod(); ?>">
+                        <option value="<?php echo $item->getEndCod(); ?>">
 
-                           Rua: <?php echo $item[$i]->getLogradouro(); ?>, 
-                           Nº: <?php echo $item[$i]->getNumero(); ?>
-                           Bairro: <?php echo $item[$i]->getBairro(); ?>,
-                           CEP: <?php echo $item[$i]->getCep(); ?>, 
-                          Complemento:  <?php echo $item[$i]->getComplemento(); ?>,
-                          Cidade:  <?php echo $item[$i]->getCep(); ?>
+                           Rua: <?php echo $item->getLogradouro(); ?>, 
+                           Nº: <?php echo $item->getNumero(); ?>
+                           Bairro: <?php echo $item->getBairro(); ?>,
+                           CEP: <?php echo $item->getCep(); ?>, 
+                          Complemento:  <?php /* echo $item->getComplemento(); */ ?>,
+                          Cidade:  <?php echo $item->getCep(); ?>
                             
 
                         </option>
 
                         <?php
 
-                    }
+                   // }
                 } ?>
             </select>
         </div>
@@ -117,7 +117,7 @@
                         <?php
 
                         $somaTotal += $produto['preco'] * $produto['qtd'];
-                        $i++;
+                       // $i++;
                     }
                 } ?>
                 <tr>
@@ -143,7 +143,7 @@
                 </label>
 
 
-                <input type="radio" name="pgto" <?php $tpPgto->getCod() == 9 ? 'checked' : '' ?> id="pgto"
+                <input type="radio" name="pgto" required <?php $tpPgto->getCod() == 9 ? 'checked' : '' ?> id="pgto"
                     value="<?php echo $tpPgto->getCod()?>">&nbsp;
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Models\DAO;
 
+use App\Lib\Sessao;
 use App\Models\DAO\BaseDAO;
 use App\Models\DAO\ProdutoPedidoDAO;
 use App\Models\DAO\PagamentoDAO;
@@ -9,6 +10,7 @@ use App\Models\Entidades\Pedido;
 use App\Models\Entidades\Produto;
 use App\Models\Entidades\ProdutoPedido;
 use APP\Models\Entidades\TipoPagamento;
+use Exception;
 
 class PedidoDAO extends BaseDAO
 {
@@ -16,40 +18,64 @@ class PedidoDAO extends BaseDAO
    public function listaPaginacao($busca = null, $totalPorPagina = 6, $paginaSelecionada = 1)
    {
 
+
       $inicio = (($paginaSelecionada - 1) * $totalPorPagina);
 
-      $whereBusca = ($busca) ? "AND (p.ped_data = '$busca' " : '';
-      $idUser ="";
+      $idUser = "";
       $where = "";
-      if($_SESSION['tipo'] == 'user'){
+
+      if ($_SESSION['tipo'] == 'user') {
+
+         $whereBusca = ($busca) ? "ped_data between '$busca[0] 00:00:00' and '$busca[1] 23:29:59' and " : '';
          $where = " WHERE ";
-         $idUser =  " u.id =  {$_SESSION['iduser']}";
+         $idUser = " u.id =  {$_SESSION['iduser']}";
+
+         if ($busca) {
+            $where .= "$whereBusca";
+         }
+
+
+
+
+      } else {
+         $whereBusca = ($busca) ? "ped_data between '$busca[0] 00:00:00' and '$busca[1] 23:29:59'" : '';
+         if ($busca) {
+            $where = " WHERE ";
+            $where .= "$whereBusca";
+         }
+
+         $idUser = "";
       }
 
-    /*   var_dump($where);
-      var_dump($idUser);
-      
-      exit;  */
+
       $resultadoTotal = $this->select(
          "SELECT count(*) as total 
         FROM pedido p inner join usuario u on p.cliente_id = u.id 
-         $where   $idUser;");
+         $where   $idUser;"
+      );
 
-      
+
       $resultado = $this->select("SELECT p.ped_num as pnum, pg.nome as pgto,u.nome,u.id,
                      p.cliente_id,p.ped_data, p.valor_total, p.end_cod, p.status
           FROM pedido p inner join usuario u on p.cliente_id = u.id
           inner join tipo_pagamento pg on pg.cod = tipo_pgto_cod
         
           $where   $idUser LIMIT {$inicio}, {$totalPorPagina};");
-      // var_dump($resultado);exit;
-      $dataSetPedidos = $resultado->fetchAll();
-      $totalLinhas = $resultadoTotal->fetch()['total'];
+
+      try {
+
+         $dataSetPedidos = $resultado->fetchAll();
+         $totalLinhas = $resultadoTotal->fetch()['total'];
+      } catch (Exception $e) {
+         throw new Exception("Ferrou");
+      }
+
 
       $listaPedidos = [];
 
 
       if ($dataSetPedidos) {
+
 
          foreach ($dataSetPedidos as $dataSetPedido) {
 
@@ -87,6 +113,12 @@ class PedidoDAO extends BaseDAO
 
          ];
 
+
+
+
+
+      } else {
+         return null;
       }
    }
 
@@ -209,7 +241,7 @@ class PedidoDAO extends BaseDAO
 
       $dataSetPedidos = $resultado->fetchAll();
 
-   
+
       $objPedido = [];
 
       if ($dataSetPedidos) {
@@ -241,21 +273,21 @@ class PedidoDAO extends BaseDAO
 
             $pedProd->setSutotal($dataSetPedido['valor']);
             $aux['valor'] = $pedProd->getSutotal();
-            
+
             $pedido->setPed_num($dataSetPedido['num']);
             $aux['ped_num'] = $pedido->getPed_num();
 
             $pedido->getTipoPagamento()->setCod($dataSetPedido['pgto_cod']);
             $aux['pgto_cod'] = $pedido->getTipoPagamento()->getCod();
-            
+
             $pedido->getEndereco()->setEndCod($dataSetPedido['end_cod']);
             $aux['end_cod'] = $pedido->getEndereco()->getEndCod();
-            
+
             $pedido->setData($dataSetPedido['ped_data']);
             $aux['ped_data'] = $pedido->getData();
 
             $listaPedidos[] = $aux;
-          
+
          }
 
       }
@@ -263,7 +295,7 @@ class PedidoDAO extends BaseDAO
       return [
 
          'resultado' => $listaPedidos
-        
+
       ];
 
 
@@ -297,10 +329,26 @@ class PedidoDAO extends BaseDAO
          return $this->delete("pedido", "ped_num = $ped_num");
 
       } catch (\Exception $e) {
-        
+
          throw new \Exception("Erro ao deletar" . $e->getMessage(), 500);
       }
    }
+   public function existePedidos($id)
+   {
+
+      $resultado = $this->select("SELECT count(*) as total FROM pedido p INNER JOIN usuario u ON u.id = p.cliente_id WHERE u.id = $id ");
+
+      $total = $resultado->fetch()['total'];
+
+      if ($total > 0) {
+
+         return true;
+      } else {
+         return false;
+      }
+   }
+
+
 
 }
 ?>

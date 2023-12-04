@@ -5,11 +5,15 @@ class Usuario{
 
 
     private int $id;
+    private string $tipo;
     private string $nome;
+    private string $cpf;
+    private string $dt_nasc;
+    private string $sexo;
+    private string $whatsapp;
     private string $email;
     private string $senha;
-    private string $tipo;
-
+    
    
     public function getId()
     {
@@ -24,6 +28,37 @@ class Usuario{
         return $this;
     }
 
+    public function setCpf($cpf) {
+        return $this->cpf = $cpf;
+    }
+
+    public function getCpf() {
+        return $this->cpf;
+    }
+
+    public function setDataNasc($dataNasc) {
+        return $this->dt_nasc = $dataNasc;
+    }
+
+    public function getDataNasc() {
+        return $this->dt_nasc;
+    }
+
+    public function setSexo($sexo) {
+        return $this->sexo = $sexo;
+    }
+
+    public function getSexo() {
+        return $this->sexo;
+    }
+    
+    public function setWhats($whats) {
+        return $this->whatsapp = $whats;
+    }
+
+    public function getWhats() {
+        return $this->whatsapp;
+    }
    
     public function getNome()
     {

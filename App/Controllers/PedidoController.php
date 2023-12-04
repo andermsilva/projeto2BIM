@@ -14,6 +14,7 @@ use App\Models\Entidades\Pedido;
 use App\Models\Entidades\ProdutoPedido;
 use App\Models\Entidades\TipoPagamento;
 
+use function PHPSTORM_META\type;
 
 class PedidoController extends Controller
 {
@@ -23,40 +24,63 @@ class PedidoController extends Controller
 
         if (!$this->auth())
             $this->redirect('/login');
- 
-        
-        /* Sessao::limpaErro();
-        Sessao::limpaMensagem(); */
-
+            
         $pedidoDAO = new PedidoDAO();
 
-        $busca = isset($_GET['busca']) ? $_GET['busca'] : null;
+        //  $busca = isset($_GET['busca']) ? $_GET['busca'] : null;
+
+        if (!$pedidoDAO->existePedidos($_SESSION['iduser']) && $_SESSION['tipo'] !='admin') {
+
+            Sessao::gravaMensagem("Faça seu Primeiro pedido");
+           // echo 'aqui';exit;
+            $this->redirect("/home");
+
+        }
+
+
+
+        if (isset($_GET['dt1']) || isset($_GET['dt2'])) {
+            $busca[0] = $_GET['dt1'];
+            $busca[1] = $_GET['dt2'];
+        } else {
+            $busca = null;
+        }
         $paginaSelecionada = isset($_GET['paginaSelecionada']) ? $_GET['paginaSelecionada'] : 1;
         $totalPorPagina = 5;
-        
-        $listPedidos = $pedidoDAO->listaPaginacao($busca, $totalPorPagina, $paginaSelecionada);
+        try {
 
-          
-        $paginacao = new Paginacao($listPedidos);
-        
-        self::setViewParam('busca', $busca);
-        self::setViewParam('paginacao', $paginacao->criandoLink($busca, "pedido"));
-        self::setViewParam("queryString", Paginacao::criandoQuerystring($paginaSelecionada, $busca));
-        self::setViewParam("listaPedidos", $listPedidos["resultado"]);
-        self::setViewParam("contagem", $listPedidos["contagem"]);
-        $this->render("pedido/index");
+            $listPedidos = $pedidoDAO->listaPaginacao($busca, $totalPorPagina, $paginaSelecionada);
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+        }
 
-        Sessao::limpaErro();
-        Sessao::limpaMensagem();
+        if (!$listPedidos) {
+            Sessao::gravaMensagem("Sem resultado");
 
+            $this->redirect("/pedido/index");
+
+        } else {
+
+            $paginacao = new Paginacao($listPedidos);
+
+            self::setViewParam('busca', $busca);
+            self::setViewParam('paginacao', $paginacao->criandoLink($busca, "pedido"));
+            self::setViewParam("queryString", Paginacao::criandoQuerystring($paginaSelecionada, $busca));
+            self::setViewParam("listaPedidos", $listPedidos["resultado"]);
+            self::setViewParam("contagem", $listPedidos["contagem"]);
+            $this->render("pedido/index");
+
+            Sessao::limpaErro();
+            Sessao::limpaMensagem();
+        }
     }
 
 
     public function carrinho()
     {
         $car = [];
-        +
-            $car['cod'] = $_POST['cod'];
+
+        $car['cod'] = $_POST['cod'];
         $car['qtd'] = $_POST['qtd'];
         $car['preco'] = $_POST['preco'];
 
@@ -97,6 +121,8 @@ class PedidoController extends Controller
             Sessao::gravarListaPedidos($arrProd);
         }
         $this->render('carrinho/index');
+        Sessao::limpaErro();
+        Sessao::limpaMensagem();
     }
 
     public function alterarPedido($codPedido)
@@ -164,6 +190,8 @@ class PedidoController extends Controller
 
 
         $vetor1 = $listaEnd->listarPorUsuario($id);
+
+      //  var_dump($vetor1);
         self::setViewParam('result', $vetor1);
 
         if ($num_ped) {
@@ -201,6 +229,8 @@ class PedidoController extends Controller
         $arrPedido['idCli'] = $_POST['iduser'];
         $arrPedido['valor'] = $_POST['total'];
         $arrPedido['ender'] = $_POST['endereco'];
+
+        
         Sessao::gravarPedido($arrPedido);
 
         $aux = [];
@@ -262,7 +292,7 @@ class PedidoController extends Controller
 
         $pedidoDAO = new PedidoDAO();
 
-        if(!$pedidoDAO->excluir($ped_num)){
+        if (!$pedidoDAO->excluir($ped_num)) {
 
             Sessao::gravaMensagem("Pedido '{$ped_num}' inexixtente ou ja foi cancelado!");
         }
@@ -277,43 +307,44 @@ class PedidoController extends Controller
     }
 
 
-public function finalizado($params){
+    public function finalizado($params)
+    {
 
-  $ped_num = $params[0];
-  $pedidoDAO = new PedidoDAO();
-  $pedidoFinalizado = $pedidoDAO->getById($ped_num);
-  $end_cod=0;
-  $pgCod =0;
-  $enderecoDAO = new EnderecoDAO();
-  $localEntrega = new Endereco();
-  $pagamentoDAO = new PagamentoDAO();
-  $formaPG = new TipoPagamento();
- 
-  foreach(  $pedidoFinalizado['resultado'] as $p){
+        $ped_num = $params[0];
+        $pedidoDAO = new PedidoDAO();
+        $pedidoFinalizado = $pedidoDAO->getById($ped_num);
+        $end_cod = 0;
+        $pgCod = 0;
+        $enderecoDAO = new EnderecoDAO();
+        $localEntrega = new Endereco();
+        $pagamentoDAO = new PagamentoDAO();
+        $formaPG = new TipoPagamento();
 
-    foreach($p as $key => $value){
+        foreach ($pedidoFinalizado['resultado'] as $p) {
 
-        if($key == 'end_cod'){
-            $end_cod = $value;
+            foreach ($p as $key => $value) {
+
+                if ($key == 'end_cod') {
+                    $end_cod = $value;
+                }
+
+                if ($key == 'pgto_cod') {
+                    $pgCod = $value;
+                }
+            }
         }
 
-        if($key == 'pgto_cod'){
-            $pgCod = $value;
-        }
+        $localEntrega = $enderecoDAO->getById($end_cod);
+        $formaPG = $pagamentoDAO->getById($pgCod);
+        /*  var_dump($localEntrega->getLogradouro());
+          exit; */
+        self::setViewParam('local', $localEntrega);
+        self::setViewParam('pagamento', $formaPG);
+
+        self::setViewParam("pedido", $pedidoFinalizado['resultado']);
+
+        $this->render('pedido/finalizado');
     }
-  }  
-  
-  $localEntrega = $enderecoDAO->getById($end_cod);
-  $formaPG = $pagamentoDAO->getById($pgCod);
- /*  var_dump($localEntrega->getLogradouro());
-   exit; */
-   self::setViewParam('local',$localEntrega);
-   self::setViewParam('pagamento',$formaPG);
-
-   self::setViewParam("pedido",$pedidoFinalizado['resultado']);
-
-   $this->render('pedido/finalizado');
-}
 
 }
 

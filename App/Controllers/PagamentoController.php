@@ -27,14 +27,14 @@ class PagamentoController extends Controller
   {
     if (!$this->auth())
       $this->redirect('/login');
-
     $ped_num = $params[0];
     $pedidoDAO = new PedidoDAO();
     $pag = $pedidoDAO->getByID($ped_num);
-
+    
+   // var_dump($pag['resultado']);exit;
     self::setViewParam("listaPedidos", $pag["resultado"]);
-    // var_dump($pag);exit;
-    $this->render('/pagamento/index');
+   // echo "aqui";exit;
+    $this->render('pagamento/index');
   }
 
   public function finalizar()

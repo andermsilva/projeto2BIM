@@ -25,7 +25,7 @@ abstract class BaseDAO
 
         if (!empty($sql)) {
 
-           // var_dump($sql);exit;
+          // var_dump($sql);exit;
             return $this->conexao->query($sql);
         }
     }

@@ -26,15 +26,11 @@
             Pedidos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-light" href="#">Sobre</a>
+            <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/sobrenos">Sobre</a>
           </li>
 
           <?php
           if (isset($_SESSION['loggedin']) && isset($_SESSION['username']) && $_SESSION['tipo']=='admin') { ?>
-
-            <li class="nav-item">
-              <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/tipopagamento">Tipo Pagamento</a>
-            </li>
             <li class="nav-item">
               <a class="nav-link text-light" href="http://<?php echo APP_HOST; ?>/tipoproduto">Tipo Produto </a>
             </li>
@@ -57,12 +53,12 @@
                    
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" style="width: 30px;"
-                  href="http://<?php echo APP_HOST; ?>/login/dashboard">minha conta</a></li>
+                  href="http://<?php echo APP_HOST; ?>/login/dashboard">Minha conta</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>
 
-              <li><a class="dropdown-item" style="width: 30px;" href="http://<?php echo APP_HOST; ?>/login/logout">logout
+              <li><a class="dropdown-item" style="width: 30px;" href="http://<?php echo APP_HOST; ?>/login/logout">Logout
 
                 </a></li>
             </ul>
