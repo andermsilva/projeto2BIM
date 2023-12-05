@@ -25,7 +25,7 @@ abstract class BaseDAO
 
         if (!empty($sql)) {
 
-          // var_dump($sql);exit;
+         // var_dump($sql);exit;
             return $this->conexao->query($sql);
         }
     }
@@ -63,12 +63,16 @@ abstract class BaseDAO
                 " $where = WHERE $where ";
 
             $stmt = $this->conexao->prepare("update $table set $cols Where $where");
-            /*      var_dump($table);
+                /*  var_dump($table);
+                 echo "<br";
                  var_dump($cols);
+                 echo "<br";
                  var_dump($values);
                  
+                 echo "<br";
                  var_dump($stmt);exit; */
-            $stmt->execute($values);
+           
+                 $stmt->execute($values);
 
             return $stmt->rowCount();
         } else {

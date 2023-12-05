@@ -27,11 +27,16 @@
                          
                    $arr_produtos = $viewVar['listaPedidos'];
                 
+                }else{
+                    $arr_produtos = $_SESSION['listaPedidos'];
                 }
-                 //var_dump($arr_produtos);exit;
-
-
-                foreach ($arr_produtos as $chave => $produto) { ?>
+                // var_dump($arr_produtos);
+                
+                
+                foreach ($arr_produtos as $chave => $produto) { 
+                  /*   var_dump($produto);echo "<br>";
+                    var_dump($_SESSION['pedido']); */
+                    ?>
 
                     <tr>
 
@@ -61,7 +66,8 @@
                     <input type="hidden" name="valor_total" value="<?php echo $somaTotal ?>">
                    
                   
-                    <input type="hidden" name="ped_num" value="<?php echo $produto['ped_num']?>" >
+                    <input type="hidden" name="ped_num" 
+                    value="<?php echo (isset($produto['ped_num']))? $produto['ped_num']:$_SESSION['pedido']['pedNum'] ?>" >
                 </tr>    
 
                 <tr>
@@ -70,7 +76,7 @@
                     </td>
 
                     <td class="text-end" colspan="2">
-                        <input type="text" value="<?php echo $produto['pgto_cod'] ?>" class="input-group-text"
+                        <input type="text" value="<?php echo $_SESSION['pedido']['tpPgto'] ?>" class="input-group-text"
                             style="height: 40px; width: 400px;margin-left: auto;" name="identificador">
 
                     </td>

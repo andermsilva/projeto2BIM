@@ -103,14 +103,14 @@ class UsuarioController extends Controller{
             $this->redirect('/usuario/edicao/' . $user->getId());
         }
 
-        try{
+     /*    try{
             
             $usuarioDAO2->atualizar($user);
 
         } catch (\Exception $e) {
             Sessao::gravaMensagem($e->getMessage());
             $this->redirect('/usuario/edicao/');
-        }
+        } */
 
         Sessao::limpaFormulario();
         Sessao::limpaMensagem();
@@ -165,6 +165,55 @@ class UsuarioController extends Controller{
         Sessao::gravaMensagem("Usuário atualizado com sucesso!");
 
         $this->render('/login/dashboard');
+    }
+
+    public function atualizar(){
+
+      //  var_dump($_POST);
+        
+        $usuario = new Usuario();
+
+        $usuario->setId($_POST['id']);
+        $usuario->setNome($_POST['nome']);
+        $usuario->setSexo($_POST['sexo']);
+        $usuario->setWhats($_POST['whats']);
+        $usuario->setCpf($_POST['cpf']);
+        $usuario->setDataNasc($_POST['datanasc']);
+        $usuario->setSenha($_POST['password']);
+        $usuario->setTipo("user");
+       
+        $usuario->setEmail($_POST['email']);
+       
+
+        Sessao::gravaFormulario($_POST);
+ 
+        $usuarioValidador = new UsuarioValidador();
+        $resultadoValidacao = $usuarioValidador->validar($usuario);
+
+        if ($resultadoValidacao->getErros()) {
+            Sessao::gravaErro($resultadoValidacao->getErros());
+            $this->redirect('/usuario/edicao/' . $_POST['cod']);
+        }
+
+        try {
+
+          //  var_dump($usuario);
+            //exit;
+            $usuarioDAO = new UsuarioDAO();
+            $usuarioDAO->atualizar($usuario);
+
+        } catch (\Exception $e) {
+            Sessao::gravaMensagem($e->getMessage());
+            $this->redirect('/usuario');
+        }
+
+        Sessao::limpaFormulario();
+        Sessao::limpaMensagem();
+        Sessao::limpaErro();
+
+        Sessao::gravaMensagem("Produto atualizado com sucesso!");
+
+        $this->redirect('/login/dashborad'); 
     }
 
 }

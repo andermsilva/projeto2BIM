@@ -17,8 +17,6 @@ class PagamentoController extends Controller
     if (!$this->auth())
       $this->redirect('/login');
 
-
-
     $this->render("pagamento/index");
 
   }
@@ -30,34 +28,35 @@ class PagamentoController extends Controller
     $ped_num = $params[0];
     $pedidoDAO = new PedidoDAO();
     $pag = $pedidoDAO->getByID($ped_num);
-    
-   // var_dump($pag['resultado']);exit;
+
+    // var_dump($pag['resultado']);exit;
     self::setViewParam("listaPedidos", $pag["resultado"]);
-   // echo "aqui";exit;
+    // echo "aqui";exit;
     $this->render('pagamento/index');
   }
 
   public function finalizar()
   {
-    
+
     $pagamento = new Pagamento();
 
-//var_dump($_POST['ped_num']);exit;
+    //var_dump($_POST['ped_num']);exit;
     $pagamento->setValor($_POST['valor_total']);
     $pagamento->getPedido()->setPed_num($_POST['ped_num']);
     $pagamento->getTipoPgto()->setCod($_POST['identificador']);
 
     $pagamentoDAO = new PagamentoDAO();
-    
+
 
     $pagamentoDAO->salvar($pagamento);
-    
+    Sessao::limparListaPedidos();
+    Sessao::limparCarrinho();
 
-     $this->redirect('/home');
-    
+    $this->redirect('/home');
+
   }
 
-  
+
 
 
 }

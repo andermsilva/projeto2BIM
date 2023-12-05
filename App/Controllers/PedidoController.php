@@ -20,8 +20,6 @@ class PedidoController extends Controller
 {
     public function index()
     {
-
-
         if (!$this->auth())
             $this->redirect('/login');
             
@@ -32,12 +30,8 @@ class PedidoController extends Controller
         if (!$pedidoDAO->existePedidos($_SESSION['iduser']) && $_SESSION['tipo'] !='admin') {
 
             Sessao::gravaMensagem("Faça seu Primeiro pedido");
-           // echo 'aqui';exit;
             $this->redirect("/home");
-
         }
-
-
 
         if (isset($_GET['dt1']) || isset($_GET['dt2'])) {
             $busca[0] = $_GET['dt1'];
@@ -50,13 +44,13 @@ class PedidoController extends Controller
         try {
 
             $listPedidos = $pedidoDAO->listaPaginacao($busca, $totalPorPagina, $paginaSelecionada);
+      
         } catch (\Exception $e) {
             var_dump($e->getMessage());
         }
 
         if (!$listPedidos) {
             Sessao::gravaMensagem("Sem resultado");
-
             $this->redirect("/pedido/index");
 
         } else {
@@ -159,47 +153,54 @@ class PedidoController extends Controller
     {
         $num_ped = 0;
         if ($params) {
-
+            
             $num_ped = $params[0];
         }
-
+        
         $id = $_SESSION['iduser'];
-
+        
         if (!$this->auth())
-            $this->redirect('/login');
+        $this->redirect('/login');
+    
+    Sessao::limpaErro();
+    Sessao::limpaMensagem();
+    
+    $pgt = new TipoPagamento();
+    $pedidoDAO = new pedidoDAO();
+    
+    $pendencias = $pedidoDAO->pedidosNoPagos($id);
+    
+    if ($pendencias['pendencias'] > 0 && isset($_SESSION['carrinho']) && $num_ped == 0) {
+        Sessao::limparListaPedidos();
+        Sessao::limparCarrinho();
+        // echo $num_ped ."<br>";
+        Sessao::gravaMensagem("Não foi possivél finalizar seu pedido!");
+        //  echo"aqui".$pendencias['pendencias'];exit;
+        $this->redirect('/pedido/index');
+    }else{
 
-        Sessao::limpaErro();
-        Sessao::limpaMensagem();
-
-        $pgt = new TipoPagamento();
-        $pedidoDAO = new pedidoDAO();
-
-        $pendencias = $pedidoDAO->pedidosNoPagos($id);
-
-        if ($pendencias['pendencias'] > 0 && isset($_SESSION['carrinho']) && $num_ped == 0) {
-            Sessao::limparListaPedidos();
-            Sessao::limparCarrinho();
-            // echo $num_ped ."<br>";
-            Sessao::gravaMensagem("Não foi possivél finalizar seu pedido!");
-            //  echo"aqui".$pendencias['pendencias'];exit;
-            $this->redirect('/pedido/index');
-        }
-
-        $listaEnd = new EnderecoDAO();
-        // $ende = new Endereco();
-
-
-        $vetor1 = $listaEnd->listarPorUsuario($id);
-
-      //  var_dump($vetor1);
-        self::setViewParam('result', $vetor1);
-
-        if ($num_ped) {
+        //echo "aqui";exit;
+    }
+    
+    $listaEnd = new EnderecoDAO();
+    // $ende = new Endereco();
+    
+    
+    $vetor1 = $listaEnd->listarPorUsuario($id);
+    
+   
+    self::setViewParam('result', $vetor1);
+    
+  
+    if ($num_ped) {
             $listaPedido = $pedidoDAO->getById($num_ped);
-            //var_dump($listaPedido["resultado"]);exit;
-            self::setViewParam("listaPedidos", $listaPedido["resultado"]);
-        }
 
+
+            self::setViewParam("listaPedidos", $listaPedido["resultado"]);
+        }/* else{
+            self::setViewParam("listaPedidos", $_SESSION['listaPedidos']);
+        } */
+    
 
         $vetor = $pedidoDAO->getAllTpgto();
 
@@ -217,26 +218,18 @@ class PedidoController extends Controller
             $this->redirect('/login');
 
         $pedido = new Pedido();
-        /* 
-         $pedido->getUsuario()->setId($_POST['iduser']);
-        
-         $pedido->getTipoPagamento()->setCod($_POST['pgto']);
-         $pedido->getEndereco()->setEndCod($_POST['endereco']);
-         $pedido->setValor($_POST['total']); */
         $arrPedido = [];
 
         $arrPedido['tpPgto'] = $_POST['pgto'];
         $arrPedido['idCli'] = $_POST['iduser'];
         $arrPedido['valor'] = $_POST['total'];
         $arrPedido['ender'] = $_POST['endereco'];
-
         
         Sessao::gravarPedido($arrPedido);
 
         $aux = [];
         foreach ($_SESSION['pedido'] as $key => $item) {
             $aux[$key] = $item;
-
         }
 
         $pedido->getTipoPagamento()->setCod($aux['tpPgto']);
@@ -249,31 +242,34 @@ class PedidoController extends Controller
             $pedidoDAO = new PedidoDAO();
 
             $numPed = $pedidoDAO->salvar($pedido);
-
-            $pedido->setPed_num($numPed);
-
-            /* echo 'aqui5';
-            echo '<hr>'; */
+           // var_dump($_SESSION['listaPedidos']);exit;
+           
+           
+             $arrPedido['pedNum'] = $numPed;
+             Sessao::gravarPedido($arrPedido);
+             $pedido->setPed_num($numPed);
 
 
             foreach ($_SESSION['listaPedidos'] as $key => $item) {
-
+                
                 foreach ($item as $k => $valor) {
-
+                    
                     $vetPedido[$k] = $valor;
                 }
-
-
+                
                 $prodPed = new ProdutoPedido();
-
+                
                 $prodPed->getProduto()->setCodigo($vetPedido['cod']);
-                $prodPed->getPedido()->setPed_num($pedido->getPed_num());
+                $prodPed->getPedido()->setPed_num($numPed);
                 $prodPed->setValorUnitario($vetPedido['preco']);
                 $prodPed->setQtde($vetPedido['qtd']);
                 $prodPed->setSutotal($vetPedido['valor']);
-
+                
                 $pedidoDAO->salvarLista($prodPed);
             }
+
+           
+            //var_dump($prodPed);exit;
 
 
         } catch (\Exception $e) {
@@ -282,6 +278,7 @@ class PedidoController extends Controller
             $this->redirect('/pedido/verificar');
 
         }
+   
         $this->redirect('/pagamento');
     }
 

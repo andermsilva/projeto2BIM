@@ -18,7 +18,7 @@ class PedidoDAO extends BaseDAO
    public function listaPaginacao($busca = null, $totalPorPagina = 6, $paginaSelecionada = 1)
    {
 
-
+      $id = $_SESSION['iduser'];
       $inicio = (($paginaSelecionada - 1) * $totalPorPagina);
 
       $idUser = "";
@@ -28,7 +28,7 @@ class PedidoDAO extends BaseDAO
 
          $whereBusca = ($busca) ? "ped_data between '$busca[0] 00:00:00' and '$busca[1] 23:29:59' and " : '';
          $where = " WHERE ";
-         $idUser = " u.id =  {$_SESSION['iduser']}";
+         $idUser = " u.id =  {$id}";
 
          if ($busca) {
             $where .= "$whereBusca";
@@ -38,12 +38,12 @@ class PedidoDAO extends BaseDAO
 
 
       } else {
-         $whereBusca = ($busca) ? "ped_data between '$busca[0] 00:00:00' and '$busca[1] 23:29:59'" : '';
+        
+         $whereBusca = ($busca) ? "ped_data between '$busca[0] 00:00:00' and '$busca[1] 23:29:59' and " : '';
          if ($busca) {
             $where = " WHERE ";
             $where .= "$whereBusca";
          }
-
          $idUser = "";
       }
 
@@ -61,7 +61,9 @@ class PedidoDAO extends BaseDAO
           inner join tipo_pagamento pg on pg.cod = tipo_pgto_cod
         
           $where   $idUser LIMIT {$inicio}, {$totalPorPagina};");
-
+/* var_dump($_SESSION['tipo']);echo "<br>";
+var_dump($where);echo "<br>";
+var_dump($idUser);"<br>";exit; */
       try {
 
          $dataSetPedidos = $resultado->fetchAll();

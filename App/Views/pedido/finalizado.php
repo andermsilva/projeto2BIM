@@ -114,7 +114,9 @@ if (isset($_SESSION['mensagem'])) {
             <?php
 
 
-            foreach ($viewVar['pedido'] as $pedido) { ?>
+            foreach ($viewVar['pedido'] as $pedido) { 
+                $date = date_create($pedido['ped_data']);
+                ?>
 
                 <tr>
 
@@ -122,7 +124,7 @@ if (isset($_SESSION['mensagem'])) {
                         <?php echo $pedido['nome'] ?>
                     </td>
                     <td>
-                        <?php echo $pedido['ped_data'] ?>
+                        <?php echo date_format($date, 'd/m/Y H:i:s') ?>
                     </td>
                     <td>
 

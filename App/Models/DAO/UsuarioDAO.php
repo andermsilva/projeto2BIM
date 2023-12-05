@@ -75,6 +75,8 @@ class UsuarioDAO extends BaseDAO
 
     public function atualizar(Usuario $usuario)
     {
+
+        
         try {
 
             $id         = $usuario->getId();
@@ -85,21 +87,22 @@ class UsuarioDAO extends BaseDAO
             $sexo      = $usuario->getSexo();
             $whats     = $usuario->getWhats();
             $email     = $usuario->getEmail();
-            $password  = $usuario->getSenha();
-
+           // $password  = $usuario->getSenha();
+ var_dump("$nome");
+ echo "<br>";
             return $this->update(
                 'usuario',
-                "nome = :nome, sexo = :sexo, dt_nasc = :dt_nasc, tipo = :tipo, senha = :senha, whatsapp = :whatsapp, email = :email, cpf = :cpf",
+                "nome = :nome, sexo = :sexo, dt_nasc = :dt_nasc, tipo = :tipo, whatsapp = :whatsapp, email = :email, cpf = :cpf ",
                 [
-                    ':id'       => $id,
+                    ':id' => $id,
                     ':nome'     => $nome,
                     ':sexo'     => $sexo,
                     ':dt_nasc'  => $datanasc,
                     ':tipo'     => $tipo,
-                    ':senha'    => $password,
+                  //  ':senha'    => $password,
                     ':whatsapp' => $whats,
                     ':email'    => $email,
-                    ':cpf'      => $cpf                    
+                   ':cpf'      => $cpf                    
                 ],
                 "id = :id"
             );
